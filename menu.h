@@ -441,9 +441,12 @@ public:
 	Colorpicker   chams_friendly_vis;
 	Colorpicker   chams_friendly_invis;
 	Slider        chams_friendly_blend;
-	Checkbox      chams_local;
+	//Checkbox      chams_local;
+	MultiDropdown chams_local;
 	Colorpicker   chams_local_col;
 	Slider        chams_local_blend;
+	Colorpicker   chams_local_ghost_col;
+	Slider        chams_local_ghost_blend;
 	Checkbox      chams_local_scope;
 
 public:
@@ -553,17 +556,28 @@ public:
 		chams_friendly_invis.setup( XOR( "color invisible" ), XOR( "chams_friendly_invis" ), { 255, 50, 0 } );
 		RegisterElement( &chams_friendly_invis, 1 );
 
+
+		chams_local.setup(XOR("chams local"), XOR("chams_local"), { XOR("real"), XOR("fake") }); //fakekk
+		RegisterElement(&chams_local, 1);
+
+
 		chams_friendly_blend.setup( "", XOR( "chams_friendly_blend" ), 10.f, 100.f, false, 0, 100.f, 1.f, XOR( L"%" ) );
 		RegisterElement( &chams_friendly_blend, 1 );
 
-		chams_local.setup( XOR( "chams local" ), XOR( "chams_local" ) );
-		RegisterElement( &chams_local, 1 );
 
 		chams_local_col.setup( XOR( "color" ), XOR( "chams_local_col" ), { 255, 255, 200 } );
 		RegisterElement( &chams_local_col, 1 );
 
 		chams_local_blend.setup( "", XOR( "chams_local_blend" ), 10.f, 100.f, false, 0, 100.f, 1.f, XOR( L"%" ) );
 		RegisterElement( &chams_local_blend, 1 );
+
+
+		chams_local_ghost_col.setup(XOR("fake color"), XOR("chams_local_ghost_col"), { 255, 255, 200 });
+		RegisterElement(&chams_local_ghost_col, 1);
+
+		chams_local_ghost_blend.setup("", XOR("chams_local_ghost_blend"), 10.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
+		RegisterElement(&chams_local_ghost_blend, 1);
+
 
 		chams_local_scope.setup( XOR( "blend when scoped" ), XOR( "chams_local_scope" ) );
 		RegisterElement( &chams_local_scope, 1 );
@@ -609,6 +623,7 @@ public:
 	Colorpicker   impact_beams_hurt_color;
 	Slider        impact_beams_time;
 	Keybind       thirdperson;
+	Slider		  thirdperson_distance;
 
 public:
 	void init( ) {
@@ -722,6 +737,9 @@ public:
 		thirdperson.setup( XOR( "thirdperson" ), XOR( "thirdperson" ) );
 		thirdperson.SetToggleCallback( callbacks::ToggleThirdPerson );
 		RegisterElement( &thirdperson, 1 );
+
+		thirdperson_distance.setup(XOR(" "), XOR("thirdperson_distance"), 50.f, 300.f, false, 0, 150.f, 1.f, XOR(L"°"));
+		RegisterElement(&thirdperson_distance, 1);
 	}
 };
 
@@ -2107,7 +2125,7 @@ public:
 public:
 	void init( ) {
 		SetPosition( 50, 50 );
-		SetSize( 630, 500 );
+		SetSize( 630, 550 );
 
 		// aim.
 		RegisterTab( &aimbot );

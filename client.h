@@ -33,6 +33,7 @@ public:
 	void DrawHUD( );
 	void UpdateInformation( );
 	void SetAngles( );
+	void SetAngles2(ang_t angle);
 	void UpdateAnimations( );
 	void KillFeed( );
 

@@ -123,7 +123,7 @@ void Visuals::ThirdpersonThink( ) {
 		math::AngleVectors( offset, &forward );
 
 		// cam_idealdist convar.
-		offset.z = 150.f;
+		offset.z = g_menu.main.visuals.thirdperson_distance.get();
 
 		// start pos.
 		origin = g_cl.m_shoot_pos;

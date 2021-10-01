@@ -37,7 +37,7 @@ bool Hooks::CreateMove( float time, CUserCmd* cmd ) {
 	ret = g_hooks.m_client_mode.GetOldMethod< CreateMove_t >( IClientMode::CREATEMOVE )( this, time, cmd );
 
 	// called from CInput::ExtraMouseSample -> return original.
-	if( !cmd->m_command_number )
+	if( !cmd || !cmd->m_command_number )
 		return ret;
 
 	// if we arrived here, called from -> CInput::CreateMove

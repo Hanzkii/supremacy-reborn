@@ -364,6 +364,19 @@ void Client::SetAngles( ) {
 		g_csgo.m_prediction->SetLocalViewAngles( m_radar );
 }
 
+void Client::SetAngles2(ang_t angle) {
+	if (!g_cl.m_local || !g_cl.m_processing || !g_menu.main.antiaim.fake_yaw.get())
+		return;
+
+	// set the nointerp flag.
+	g_cl.m_local->m_fEffects() |= EF_NOINTERP;
+
+	// apply the rotation.
+	g_cl.m_local->SetAbsAngles(angle);
+	g_cl.m_local->m_angRotation() = angle;
+	g_cl.m_local->m_angNetworkAngles() = angle;
+}
+
 void Client::UpdateAnimations( ) {
 	if( !g_cl.m_local || !g_cl.m_processing )
 		return;
@@ -381,6 +394,8 @@ void Client::UpdateAnimations( ) {
 	// update abs yaw with last networked abs yaw.
 	g_cl.m_local->SetAbsAngles( ang_t( 0.f, g_cl.m_abs_yaw, 0.f ) );
 }
+
+
 
 void Client::UpdateInformation( ) {
 	if( g_cl.m_lag > 0 )

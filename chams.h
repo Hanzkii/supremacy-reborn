@@ -23,6 +23,8 @@ public:
 	bool OverridePlayer( int index );
 	bool GenerateLerpedMatrix( int index, BoneArray* out );
 	void RenderHistoryChams( int index );
+	void RenderChams(Player* player);
+	void RenderGhostChams(Player* player);
 	bool DrawModel( uintptr_t ctx, const DrawModelState_t& state, const ModelRenderInfo_t& info, matrix3x4_t* bone );
 	void SceneEnd( );
 
