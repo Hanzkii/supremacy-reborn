@@ -1,5 +1,5 @@
 #pragma once
-//test
+
 // class size is only 4 bytes on x86-32 and 8 bytes on x86-64.
 class Address {
 protected:
