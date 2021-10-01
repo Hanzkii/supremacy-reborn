@@ -349,7 +349,7 @@ void Visuals::StatusIndicators( ) {
 	for( size_t i{ }; i < indicators.size( ); ++i ) {
 		auto& indicator = indicators[ i ];
 
-		render::indicator.string( 20, g_cl.m_height - 80 - ( 30 * i ), indicator.color, indicator.text );
+		render::indicator.string( 20, g_cl.m_height - 400 - ( 30 * i ), indicator.color, indicator.text );
 	}
 }
 
