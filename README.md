@@ -1,4 +1,17 @@
 # supremacy
+
+
+## CSGO cheat made for 2018 hvh Feel free to use the cheat and if you want you can also contribute to the project.
+
+
+
+
+
+
+
+
+
+
 Supremacy Counter-Strike: Global Offensive cheat, by https://interwebz.cc/. Good for learning, everything is commented. Open Source.
 
 Since the source has been going around awhile, and people thinking they're cool because they have this source I decieded to release it.
