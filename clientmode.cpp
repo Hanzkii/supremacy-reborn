@@ -37,8 +37,12 @@ bool Hooks::CreateMove( float time, CUserCmd* cmd ) {
 	ret = g_hooks.m_client_mode.GetOldMethod< CreateMove_t >( IClientMode::CREATEMOVE )( this, time, cmd );
 
 	// called from CInput::ExtraMouseSample -> return original.
-	if( !cmd || !cmd->m_command_number )
+	if( !cmd || !cmd->m_command_number || !g_csgo.m_engine->ISCONNECTED || !g_csgo.m_engine->ISINGAME)
 		return ret;
+
+
+	if (g_menu.main.misc.clantag.get())
+		g_cl.SetClantag();
 
 	// if we arrived here, called from -> CInput::CreateMove
 	// call EngineClient::SetViewAngles according to what the original returns.
@@ -56,6 +60,7 @@ bool Hooks::CreateMove( float time, CUserCmd* cmd ) {
 
 	// invoke move function.
 	g_cl.OnTick( cmd );
+
 
 	return false;
 }

@@ -180,7 +180,7 @@ void Hooks::init( ) {
 	m_fire_bullets.init( g_csgo.TEFireBullets );
 	m_fire_bullets.add( 7, util::force_cast( &Hooks::PostDataUpdate ) );
 
-	m_client_state.init( g_csgo.m_hookable_cl );
+	//m_client_state.init( g_csgo.m_hookable_cl );
 	m_client_state.add( CClientState::TEMPENTITIES, util::force_cast( &Hooks::TempEntities ) );
 
 	// register our custom entity listener.

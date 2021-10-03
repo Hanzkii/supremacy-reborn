@@ -84,7 +84,7 @@ public:
 	C_CSGameRules *m_gamerules;
 	IViewRenderBeams *m_beams;
 	void *m_radar;
-	void *m_hookable_cl;
+	//void *m_hookable_cl;
 
 public:
 	// convars.

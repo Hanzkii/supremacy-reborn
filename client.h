@@ -49,6 +49,8 @@ public:
 	void UpdateRevolverCock( );
 	void UpdateIncomingSequences( );
 
+	void SetClantag();
+
 public:
 	// local player variables.
 	Player*          m_local;
