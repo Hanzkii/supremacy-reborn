@@ -2,8 +2,6 @@
 
 Client g_cl{ };
 
-// loader will set this fucker.
-char username[33] = "\x90\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x90";
 
 // init routine.
 ulong_t __stdcall Client::init(void* arg) {
@@ -78,6 +76,7 @@ void Client::OnPaint() {
 	g_visuals.think();
 	g_grenades.paint();
 	g_notify.think();
+
 
 	DrawHUD();
 	KillFeed();
@@ -605,10 +604,31 @@ void Client::UpdateIncomingSequences() {
 
 void Client::SetClantag()
 {
+
+
 	static int(__fastcall * clantag)(const char*, const char*);
 	if (!clantag)
 		clantag = pattern::find(g_csgo.m_engine_dll, XOR("53 56 57 8B DA 8B F9 FF 15")).as< int(__fastcall*)(const char*, const char*) >();
 
 
-	clantag("supremacy", "");
+	static float time;
+	static int CurrentLength;
+	std::string ClantagStr = "supremacy ";
+	size_t size = ClantagStr.length();
+	if (g_csgo.m_globals->m_realtime + game::TIME_TO_TICKS(g_cl.m_latency) - time >= 0.5f)
+	{
+
+
+
+		if (CurrentLength <= size)
+			CurrentLength++;
+		else
+			CurrentLength = 0;
+
+
+		clantag(ClantagStr.substr(0, CurrentLength).c_str(), ClantagStr.c_str());
+		time = g_csgo.m_globals->m_realtime + game::TIME_TO_TICKS(g_cl.m_latency);
+	}
+
+
 }

@@ -119,7 +119,9 @@ void Force_proxy( CRecvProxyData *data, Address ptr, Address out ) {
 
 void Hooks::init( ) {
 	// hook wndproc.
-	m_old_wndproc = ( WNDPROC )g_winapi.SetWindowLongA( g_csgo.m_game->m_hWindow, GWL_WNDPROC, util::force_cast< LONG >( Hooks::WndProc ) );
+	auto m_hWindow = FindWindowA(XOR("Valve001"), NULL); 
+	m_old_wndproc = (WNDPROC)g_winapi.SetWindowLongA(m_hWindow, GWL_WNDPROC, util::force_cast<LONG>(Hooks::WndProc));
+
 
 	// setup normal VMT hooks.
 	m_panel.init( g_csgo.m_panel );
