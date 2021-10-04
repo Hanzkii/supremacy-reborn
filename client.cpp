@@ -611,24 +611,17 @@ void Client::SetClantag()
 		clantag = pattern::find(g_csgo.m_engine_dll, XOR("53 56 57 8B DA 8B F9 FF 15")).as< int(__fastcall*)(const char*, const char*) >();
 
 
-	static float time;
+	float time = g_csgo.m_globals->m_realtime + game::TIME_TO_TICKS(g_cl.m_latency);
 	static int CurrentLength;
 	std::string ClantagStr = "supremacy ";
 	size_t size = ClantagStr.length();
-	if (g_csgo.m_globals->m_realtime + game::TIME_TO_TICKS(g_cl.m_latency) - time >= 0.5f)
-	{
+	std::string curClantag;
 
 
 
-		if (CurrentLength <= size)
-			CurrentLength++;
-		else
-			CurrentLength = 0;
-
-
-		clantag(ClantagStr.substr(0, CurrentLength).c_str(), ClantagStr.c_str());
-		time = g_csgo.m_globals->m_realtime + game::TIME_TO_TICKS(g_cl.m_latency);
+	for (int i = 0; i < size; i++) {
+		int curLetter = i + (int)(time * 2); // Rate is 2 characters a second
+		curClantag += ClantagStr[curLetter % size]; // Current char is wrapped to clantag length so it loops
 	}
-
-
+	clantag(curClantag.c_str(), curClantag.c_str());
 }

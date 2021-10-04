@@ -203,12 +203,15 @@ bool CSGO::init( ) {
 	g_chams.init( );
 	g_hooks.init( );
 
+	
+
     // if we injected and we're ingame, run map load func.
 	if( m_engine->IsInGame( ) ) {
 		g_cl.OnMapload( );
 		g_csgo.cl_fullupdate->m_callback( );
 	}
-	
+
+	std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	m_done = true;
 	return true;
 }
