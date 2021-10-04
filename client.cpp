@@ -601,60 +601,13 @@ void Client::UpdateIncomingSequences() {
 }
 
 
-//
-//void Client::SetClantag()
-//{
-//
-//
-//	static int(__fastcall * clantag)(const char*, const char*);
-//	if (!clantag)
-//		clantag = pattern::find(g_csgo.m_engine_dll, XOR("53 56 57 8B DA 8B F9 FF 15")).as< int(__fastcall*)(const char*, const char*) >();
-//
-//
-//
-//	static int CurrentLength;
-//	std::string ClantagStr = "supremacy ";
-//	size_t size = ClantagStr.length();
-//	std::string curClantag;
-//
-//
-//
-//	for (int i = 0; i < size; i++) {
-//		int curLetter = i + (int)(time * 2); // Rate is 2 characters a second
-//		curClantag += ClantagStr[curLetter % size]; // Current char is wrapped to clantag length so it loops
-//	}
-//	clantag(curClantag.c_str(), curClantag.c_str());
-//}
-
-std::string rotate(std::string s, int x) {
-	for (int j = 0; j < x; j++)
-		for (int i = 1; i < s.size(); i++)
-			std::swap(s[i - 1], s[i]);
-	return s;
-}
 
 void Client::SetClantag()
 {
-
 	static int(__fastcall * clantag)(const char*, const char*);
 	if (!clantag)
 		clantag = pattern::find(g_csgo.m_engine_dll, XOR("53 56 57 8B DA 8B F9 FF 15")).as< int(__fastcall*)(const char*, const char*) >();
 
-	float time = g_csgo.m_globals->m_realtime + game::TIME_TO_TICKS(g_cl.m_latency);
-	std::string szClanTag = XOR("    supremacy    ");
-
-	static int prevtime;
-	static int prevval;
-
-	if (int(time * 2) != prevtime)
-	{
-		if (prevval != int(time * 2) % szClanTag.size())
-		{
-			prevval = int(time * 2) % szClanTag.size();
-			clantag(rotate(szClanTag, prevval).c_str(), szClanTag.c_str());
-		}
-	}
-
-	prevtime = time;
-
+	clantag("supremacy", "supremacy");
 }
+
