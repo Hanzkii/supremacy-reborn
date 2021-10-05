@@ -542,6 +542,16 @@ public:
 		return get< int >(g_entoffsets.m_iHealth);
 	}
 
+	__forceinline vec3_t &GetBonePosition(int i)
+	{
+		matrix3x4a_t boneMatrix[128];
+		if (this->SetupBones(boneMatrix, 128, 0x00000100, GetTickCount64()))
+		{
+			return vec3_t(boneMatrix[i][0][3], boneMatrix[i][1][3], boneMatrix[i][2][3]);
+		}
+		return vec3_t(0, 0, 0);
+	}
+
 	__forceinline int &m_iAccount() {
 		return get< int >(g_entoffsets.m_iAccount);
 	}
@@ -799,41 +809,40 @@ public:
 	__forceinline void GetEyePos(vec3_t *pos) {
 		util::get_method< void(__thiscall *)(decltype(this), vec3_t *) >(this, GETEYEPOS)(this, pos);
 	}
-
-	__forceinline void ModifyEyePosition(CCSGOPlayerAnimState *state, vec3_t *pos) {
+#define FIRSTPERSON_TO_THIRDPERSON_VERTICAL_TOLERANCE_MIN 4.0f
+#define FIRSTPERSON_TO_THIRDPERSON_VERTICAL_TOLERANCE_MAX 10.0f
+	__forceinline void ModifyEyePosition(CCSGOPlayerAnimState *state, vec3_t *pos)
+	{
 		if (!state) {
 			return;
 		}
 
-		//  if ( *(this + 0x50) && (*(this + 0x100) || *(this + 0x94) != 0.0 || !sub_102C9480(*(this + 0x50))) )
+
 		if (state->m_player &&
 			(state->m_land || state->m_player->m_flDuckAmount() != 0.f || !state->m_player->GetGroundEntity())) {
-			auto v5 = 8;
+			auto headbone = 8;
 
-			if (v5 != -1 && state->m_player->m_BoneCache().m_pCachedBones) {
-				vec3_t head_pos(
-					state->m_player->m_BoneCache().m_pCachedBones[8][0][3],
-					state->m_player->m_BoneCache().m_pCachedBones[8][1][3],
-					state->m_player->m_BoneCache().m_pCachedBones[8][2][3]);
+			if (headbone != -1 ) {
+				vec3_t vecHeadPos = state->m_player->GetBonePosition(headbone);
+	
+				vecHeadPos.z +=  1.7;
 
-				auto v12 = head_pos;
-				auto v7 = v12.z + 1.7;
-
-				auto v8 = pos->z;
-				if (v8 > v7) // if (v8 > (v12 + 1.7))
+				if (vecHeadPos.z < pos->z)
 				{
 					float v13 = 0.f;
-					float v3 = (*pos).z - v7;
+					float delta = (*pos).z - vecHeadPos.z;
 
-					float v4 = (v3 - 4.f) * 0.16666667;
+					float v4 = (delta - FIRSTPERSON_TO_THIRDPERSON_VERTICAL_TOLERANCE_MIN) / FIRSTPERSON_TO_THIRDPERSON_VERTICAL_TOLERANCE_MAX;
 					if (v4 >= 0.f)
 						v13 = std::fminf(v4, 1.f);
 
-					(*pos).z = (((v7 - (*pos).z)) * (((v13 * v13) * 3.0) - (((v13 * v13) * 2.0) * v13))) + (*pos).z;
+					(*pos).z += (((vecHeadPos.z - (*pos).z)) * (((v13 * v13) * 3.0) - (((v13 * v13) * 2.0) * v13))) + (*pos).z;
 				}
 			}
 		}
 	}
+
+
 
 	__forceinline vec3_t GetShootPosition() {
 		vec3_t pos;

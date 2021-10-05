@@ -15,6 +15,8 @@ ulong_t __stdcall Client::init(void* arg) {
 	// welcome the user.
 	g_notify.add(tfm::format(XOR("welcome %s\n"), g_cl.m_user));
 
+
+
 	return 1;
 }
 

@@ -1118,7 +1118,8 @@ void Aimbot::apply( ) {
 			if ( !g_menu.main.aimbot.silent.get( ) )
 				g_csgo.m_engine->SetViewAngles( m_angle );
 
-			g_visuals.DrawHitboxMatrix( m_record, colors::white, 10.f );
+			//add checkbox
+			g_visuals.DrawHitboxMatrix( m_record, colors::white, 2.f );
 		}
 
 		// nospread.
