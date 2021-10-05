@@ -107,7 +107,7 @@ void HVH::AutoDirection( ) {
 			g_cl.m_shoot_pos.z };
 
 		// draw a line for debugging purposes.
-		//g_csgo.m_debug_overlay->AddLineOverlay( start, end, 255, 0, 0, true, 0.1f );
+		g_csgo.m_debug_overlay->AddLineOverlay( start, end, 255, 0, 0, true, 0.1f );
 
 		// compute the direction.
 		vec3_t dir = end - start;

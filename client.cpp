@@ -415,9 +415,9 @@ void Client::UpdateInformation() {
 	// current angle will be animated.
 	m_angle = g_cl.m_cmd->m_view_angles;
 
-	// fix landing anim.
-	if (state->m_land && !state->m_dip_air && state->m_dip_cycle > 0.f)
-		m_angle.x = -12.f;
+	//// fix landing anim.
+	//if (state->m_land && !state->m_dip_air && state->m_dip_cycle > 0.f)
+	//	m_angle.x = -12.f;
 
 	math::clamp(m_angle.x, -90.f, 90.f);
 	m_angle.normalize();

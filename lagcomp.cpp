@@ -354,14 +354,14 @@ void LagCompensation::AirAccelerate( LagRecord* record, ang_t angle, float fmove
 		return;
 
 	// Determine acceleration speed after acceleration
-	accelspeed = g_csgo.sv_airaccelerate->GetFloat( ) * wishspeed * g_csgo.m_globals->m_interval;
+	accelspeed = g_csgo.sv_airaccelerate->GetFloat( ) * wishspeed * g_csgo.m_globals->m_frametime * record->m_player->m_surfaceFriction();
 
 	// cap it.
 	if( accelspeed > addspeed )
 		accelspeed = addspeed;
 
 	// add accel.
-	record->m_pred_velocity += ( wishdir * accelspeed );
+	record->m_pred_velocity += (accelspeed * wishdir);
 }
 
 void LagCompensation::PredictAnimations( CCSGOPlayerAnimState* state, LagRecord* record ) {
