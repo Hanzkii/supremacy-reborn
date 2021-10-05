@@ -836,24 +836,6 @@ public:
 	}
 
 	__forceinline vec3_t GetShootPosition() {
-		/*
-		float *__thiscall sub_103A4A60(_DWORD *this, float *a2)
-		{
-			int v2; // edi
-			_DWORD *v3; // ecx
-
-			v2 = this;
-			(*(*this + 652))(a2);
-			if ( *(v2 + 0x39E1) )
-			{
-				v3 = *(v2 + 0x3874);
-				if ( v3 )
-					sub_103B4130(v3, a2);
-				}
-				return a2;
-			}
-		*/
-
 		vec3_t pos;
 
 		GetEyePos(&pos);
