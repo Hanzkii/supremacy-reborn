@@ -207,7 +207,7 @@ public:
 	__forceinline void clamp( ) {
 		math::clamp( x, -89.f, 89.f );
 		math::clamp( y, -180.f, 180.f );
-		math::clamp( z, -90.f, 90.f );
+		math::clamp( z, 0.0f, 0.0f );
 	}
 
 	__forceinline void SanitizeAngle( ) {
