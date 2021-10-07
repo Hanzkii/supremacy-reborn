@@ -323,6 +323,8 @@ void Client::OnTick(CUserCmd* cmd) {
 		g_csgo.ServerRankRevealAll(&msg);
 	}
 
+	if (g_menu.main.misc.clantag.get())
+		g_cl.SetClantag();
 
 
 	// store some data and update prediction.

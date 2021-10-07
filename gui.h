@@ -40,7 +40,7 @@ public:
 public:
 	__forceinline void update( ) {
 		// iterate all keys.
-		for( int i{}; i <= 254; ++i ) {
+		for( int i{}; i <= 255; ++i ) {
 			key_t* key = &m_keys[ i ];
 
 			key->pressed = false;

@@ -35,32 +35,30 @@ bool Hooks::CreateMove(float time, CUserCmd* cmd) {
 
 	// let original run first.
 	ret = g_hooks.m_client_mode.GetOldMethod< CreateMove_t >(IClientMode::CREATEMOVE)(this, time, cmd);
-
-	// called from CInput::ExtraMouseSample -> return original.
-	if (!cmd || !cmd->m_command_number || !g_csgo.m_engine->ISCONNECTED || !g_csgo.m_engine->ISINGAME)
+	if (!cmd || !cmd->m_command_number)
 		return ret;
 
-	if (g_menu.main.misc.clantag.get())
-		g_cl.SetClantag();
 
-	// if we arrived here, called from -> CInput::CreateMove
-	// call EngineClient::SetViewAngles according to what the original returns.
-	if (ret)
-		g_csgo.m_engine->SetViewAngles(cmd->m_view_angles);
+	if (g_csgo.m_engine->ISCONNECTED && g_csgo.m_engine->ISINGAME)
+	{
+		// if we arrived here, called from -> CInput::CreateMove
+		// call EngineClient::SetViewAngles according to what the original returns.
+		if (ret)
+			g_csgo.m_engine->SetViewAngles(cmd->m_view_angles);
 
-	// random_seed isn't generated in ClientMode::CreateMove yet, we must set generate it ourselves.
-	cmd->m_random_seed = g_csgo.MD5_PseudoRandom(cmd->m_command_number) & 0x7fffffff;
+		// random_seed isn't generated in ClientMode::CreateMove yet, we must set generate it ourselves.
+		cmd->m_random_seed = g_csgo.MD5_PseudoRandom(cmd->m_command_number) & 0x7fffffff;
 
-	// get bSendPacket off the stack.
-	g_cl.m_packet = stack.next().local(0x1c).as< bool* >();
+		// get bSendPacket off the stack.
+		g_cl.m_packet = stack.next().local(0x1c).as< bool* >();
 
-	// get bFinalTick off the stack.
-	g_cl.m_final_packet = stack.next().local(0x1b).as< bool* >();
+		// get bFinalTick off the stack.
+		g_cl.m_final_packet = stack.next().local(0x1b).as< bool* >();
 
-	// invoke move function.
-	g_cl.OnTick(cmd);
+		// invoke move function.
+		g_cl.OnTick(cmd);
 
-
+	}
 	return false;
 }
 
