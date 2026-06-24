@@ -111,6 +111,30 @@ bool callbacks::IsMultipointBodyOn( ) {
 	return g_menu.main.aimbot.multipoint.get( 2 );
 }
 
+bool callbacks::IsWeaponClass0( ) {
+	return g_menu.main.weapons.weapon_class.get( ) == 0;
+}
+
+bool callbacks::IsWeaponClass1( ) {
+	return g_menu.main.weapons.weapon_class.get( ) == 1;
+}
+
+bool callbacks::IsWeaponClass2( ) {
+	return g_menu.main.weapons.weapon_class.get( ) == 2;
+}
+
+bool callbacks::IsWeaponClass3( ) {
+	return g_menu.main.weapons.weapon_class.get( ) == 3;
+}
+
+bool callbacks::IsWeaponClass4( ) {
+	return g_menu.main.weapons.weapon_class.get( ) == 4;
+}
+
+bool callbacks::IsWeaponClass5( ) {
+	return g_menu.main.weapons.weapon_class.get( ) == 5;
+}
+
 bool callbacks::IsAntiAimModeStand( ) {
 	return g_menu.main.antiaim.mode.get( ) == 0;
 }

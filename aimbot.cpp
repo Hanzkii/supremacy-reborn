@@ -2,6 +2,36 @@
 
 Aimbot g_aimbot{ };;
 
+namespace {
+	// map the active csgo weapon type to a per-class config group ( 0..5 ),
+	// or -1 when the weapon has no per-class group ( knife / c4 / grenade ).
+	int WeaponConfigClass( ) {
+		switch ( g_cl.m_weapon_type ) {
+		case WEAPONTYPE_PISTOL:        return 0;
+		case WEAPONTYPE_RIFLE:         return 1;
+		case WEAPONTYPE_SNIPER_RIFLE:  return 2;
+		case WEAPONTYPE_MACHINEGUN:    return 3;
+		case WEAPONTYPE_SUBMACHINEGUN: return 4;
+		case WEAPONTYPE_SHOTGUN:       return 5;
+		default:                       return -1;
+		}
+	}
+
+	// returns the per-class group for the active weapon when its override is
+	// enabled, otherwise nullptr ( fall back to the global aimbot settings ).
+	WeaponClassGroup* ActiveWeaponConfig( ) {
+		int idx = WeaponConfigClass( );
+		if ( idx < 0 )
+			return nullptr;
+
+		WeaponClassGroup* g = &g_menu.main.weapons.groups[ idx ];
+		if ( !g->override_cfg.get( ) )
+			return nullptr;
+
+		return g;
+	}
+}
+
 void AimPlayer::UpdateAnimations(LagRecord* record) {
 	CCSGOPlayerAnimState* state = m_player->m_PlayerAnimState();
 	if (!state)
@@ -328,6 +358,13 @@ void AimPlayer::SetupHitboxes(LagRecord* record, bool history) {
 		return;
 	}
 
+	// per-weapon-class body-aim override: force body only for this class.
+	WeaponClassGroup* wc = ActiveWeaponConfig();
+	if (wc && wc->baim.get()) {
+		m_hitboxes.push_back({ HITBOX_BODY, HitscanMode::PREFER });
+		return;
+	}
+
 	// prefer, always.
 	if (g_menu.main.aimbot.baim1.get(0))
 		m_hitboxes.push_back({ HITBOX_BODY, HitscanMode::PREFER });
@@ -386,6 +423,14 @@ void AimPlayer::SetupHitboxes(LagRecord* record, bool history) {
 		return;
 
 	std::vector< size_t > hitbox{ history ? g_menu.main.aimbot.hitbox_history.GetActiveIndices() : g_menu.main.aimbot.hitbox.GetActiveIndices() };
+
+	// per-weapon-class hitbox override ( only when this class selects boxes ).
+	if (wc) {
+		std::vector< size_t > wc_hitbox{ wc->hitbox.GetActiveIndices() };
+		if (!wc_hitbox.empty())
+			hitbox = wc_hitbox;
+	}
+
 	if (hitbox.empty())
 		return;
 
@@ -666,7 +711,13 @@ bool Aimbot::CheckHitchance(Player* player, const ang_t& angle) {
 	vec3_t     start{ g_cl.m_shoot_pos }, end, fwd, right, up, dir, wep_spread;
 	float      inaccuracy, spread;
 	CGameTrace tr;
-	size_t     total_hits{ }, needed_hits{ (size_t)std::ceil((g_menu.main.aimbot.hitchance_amount.get() * SEED_MAX) / HITCHANCE_MAX) };
+	// per-weapon-class hitchance override ( 0 = keep global ).
+	float      hc_amount = g_menu.main.aimbot.hitchance_amount.get();
+	WeaponClassGroup* wc = ActiveWeaponConfig();
+	if (wc && wc->hitchance.get() > 0.f)
+		hc_amount = wc->hitchance.get();
+
+	size_t     total_hits{ }, needed_hits{ (size_t)std::ceil((hc_amount * SEED_MAX) / HITCHANCE_MAX) };
 
 	// get needed directional vectors.
 	math::AngleVectors(angle, &fwd, &right, &up);
@@ -909,6 +960,12 @@ bool AimPlayer::GetBestAimPosition(vec3_t& aim, float& damage, LagRecord* record
 
 	else {
 		dmg = g_menu.main.aimbot.minimal_damage.get();
+
+		// per-weapon-class minimal damage override ( 0 = keep global ).
+		WeaponClassGroup* wc = ActiveWeaponConfig();
+		if (wc && wc->min_damage.get() > 0.f)
+			dmg = wc->min_damage.get();
+
 		if (g_menu.main.aimbot.minimal_damage_hp.get())
 		{
 			//std::ceil((dmg / 100.f) * hp);
@@ -1042,8 +1099,14 @@ bool Aimbot::SelectTarget(LagRecord* record, const vec3_t& aim, float damage) {
 
 	// fov check.
 	if (g_menu.main.aimbot.fov.get()) {
+		// per-weapon-class fov override ( 0 = keep global ).
+		float fov_amount = g_menu.main.aimbot.fov_amount.get();
+		WeaponClassGroup* wc = ActiveWeaponConfig();
+		if (wc && wc->fov.get() > 0.f)
+			fov_amount = wc->fov.get();
+
 		// if out of fov, retn false.
-		if (math::GetFOV(g_cl.m_view_angles, g_cl.m_shoot_pos, aim) > g_menu.main.aimbot.fov_amount.get())
+		if (math::GetFOV(g_cl.m_view_angles, g_cl.m_shoot_pos, aim) > fov_amount)
 			return false;
 	}
 

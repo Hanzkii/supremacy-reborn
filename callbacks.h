@@ -23,6 +23,13 @@ namespace callbacks {
 	bool IsMultipointOn( );
 	bool IsMultipointBodyOn( );
 
+	bool IsWeaponClass0( );
+	bool IsWeaponClass1( );
+	bool IsWeaponClass2( );
+	bool IsWeaponClass3( );
+	bool IsWeaponClass4( );
+	bool IsWeaponClass5( );
+
 	bool IsAntiAimModeStand( );
 	bool HasStandYaw( );
 	bool IsStandYawJitter( );

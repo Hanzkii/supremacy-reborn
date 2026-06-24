@@ -2208,11 +2208,93 @@ public:
 	}
 };
 
+// per-weapon-class aimbot overrides. each class ( pistols / rifles /
+// snipers / autos / smgs / shotguns ) keeps its own group of settings
+// that override the global aimbot values when its toggle is on.
+struct WeaponClassGroup {
+	Checkbox      override_cfg;
+	Slider        min_damage;
+	Slider        hitchance;
+	Slider        fov;
+	MultiDropdown hitbox;
+	Checkbox      baim;
+};
+
+class WeaponsTab : public Tab {
+public:
+	Dropdown         weapon_class;
+	WeaponClassGroup groups[ 6 ];
+
+public:
+	void setup_group( WeaponClassGroup& g, bool ( *cb )( ),
+		const std::string& ov, const std::string& md, const std::string& hc,
+		const std::string& fv, const std::string& hb, const std::string& bm ) {
+
+		g.override_cfg.setup( XOR( "override for this class" ), ov );
+		g.override_cfg.AddShowCallback( cb );
+		RegisterElement( &g.override_cfg );
+
+		g.min_damage.setup( XOR( "minimal damage ( 0 = global )" ), md, 0.f, 100.f, true, 0, 0.f, 1.f );
+		g.min_damage.AddShowCallback( cb );
+		RegisterElement( &g.min_damage );
+
+		g.hitchance.setup( XOR( "hitchance ( 0 = global )" ), hc, 0.f, 100.f, true, 0, 0.f, 1.f );
+		g.hitchance.AddShowCallback( cb );
+		RegisterElement( &g.hitchance );
+
+		g.fov.setup( XOR( "angle limit ( 0 = global )" ), fv, 0.f, 180.f, true, 0, 0.f, 1.f, XOR( L"°" ) );
+		g.fov.AddShowCallback( cb );
+		RegisterElement( &g.fov );
+
+		g.hitbox.setup( XOR( "hitbox override" ), hb, { XOR( "head" ), XOR( "chest" ), XOR( "body" ), XOR( "arms" ), XOR( "legs" ) } );
+		g.hitbox.AddShowCallback( cb );
+		RegisterElement( &g.hitbox );
+
+		g.baim.setup( XOR( "force body aim" ), bm );
+		g.baim.AddShowCallback( cb );
+		RegisterElement( &g.baim );
+	}
+
+	void init() {
+		SetTitle( XOR( "weapons" ) );
+
+		weapon_class.setup( XOR( "weapon class" ), XOR( "weapon_class" ),
+			{ XOR( "pistols" ), XOR( "rifles" ), XOR( "snipers" ), XOR( "autos" ), XOR( "smgs" ), XOR( "shotguns" ) } );
+		RegisterElement( &weapon_class );
+
+		setup_group( groups[ 0 ], callbacks::IsWeaponClass0,
+			XOR( "wc_pistol_ov" ), XOR( "wc_pistol_md" ), XOR( "wc_pistol_hc" ),
+			XOR( "wc_pistol_fov" ), XOR( "wc_pistol_hb" ), XOR( "wc_pistol_baim" ) );
+
+		setup_group( groups[ 1 ], callbacks::IsWeaponClass1,
+			XOR( "wc_rifle_ov" ), XOR( "wc_rifle_md" ), XOR( "wc_rifle_hc" ),
+			XOR( "wc_rifle_fov" ), XOR( "wc_rifle_hb" ), XOR( "wc_rifle_baim" ) );
+
+		setup_group( groups[ 2 ], callbacks::IsWeaponClass2,
+			XOR( "wc_sniper_ov" ), XOR( "wc_sniper_md" ), XOR( "wc_sniper_hc" ),
+			XOR( "wc_sniper_fov" ), XOR( "wc_sniper_hb" ), XOR( "wc_sniper_baim" ) );
+
+		setup_group( groups[ 3 ], callbacks::IsWeaponClass3,
+			XOR( "wc_auto_ov" ), XOR( "wc_auto_md" ), XOR( "wc_auto_hc" ),
+			XOR( "wc_auto_fov" ), XOR( "wc_auto_hb" ), XOR( "wc_auto_baim" ) );
+
+		setup_group( groups[ 4 ], callbacks::IsWeaponClass4,
+			XOR( "wc_smg_ov" ), XOR( "wc_smg_md" ), XOR( "wc_smg_hc" ),
+			XOR( "wc_smg_fov" ), XOR( "wc_smg_hb" ), XOR( "wc_smg_baim" ) );
+
+		setup_group( groups[ 5 ], callbacks::IsWeaponClass5,
+			XOR( "wc_shotgun_ov" ), XOR( "wc_shotgun_md" ), XOR( "wc_shotgun_hc" ),
+			XOR( "wc_shotgun_fov" ), XOR( "wc_shotgun_hb" ), XOR( "wc_shotgun_baim" ) );
+
+	}
+};
+
 class MainForm : public Form {
 public:
 	// aimbot.
 	AimbotTab    aimbot;
 	AntiAimTab   antiaim;
+	WeaponsTab   weapons;
 
 	// visuals.
 	PlayersTab	 players;
@@ -2235,6 +2317,9 @@ public:
 
 		RegisterTab(&antiaim);
 		antiaim.init();
+
+		RegisterTab(&weapons);
+		weapons.init();
 
 		// visuals.
 		RegisterTab(&players);
