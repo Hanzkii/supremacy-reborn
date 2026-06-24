@@ -24,6 +24,12 @@ public:
 	void OnBodyUpdate( Player* player, float value );
 	float GetAwayAngle( LagRecord* record );
 
+	// 2018-style helpers: animation/delta desync, pitch and rotation resolving.
+	float GetMaxDesync( LagRecord* record );
+	float AnimationSide( AimPlayer* data, LagRecord* record );
+	void  ResolvePitch( AimPlayer* data, LagRecord* record );
+	bool  DetectRotation( AimPlayer* data, LagRecord* record, float& predicted );
+
 	void MatchShot( AimPlayer* data, LagRecord* record );
 	void SetMode( LagRecord* record );
 

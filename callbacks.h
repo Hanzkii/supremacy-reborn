@@ -23,29 +23,47 @@ namespace callbacks {
 	bool IsMultipointOn( );
 	bool IsMultipointBodyOn( );
 
+	bool IsWeaponClass0( );
+	bool IsWeaponClass1( );
+	bool IsWeaponClass2( );
+	bool IsWeaponClass3( );
+	bool IsWeaponClass4( );
+	bool IsWeaponClass5( );
+
 	bool IsAntiAimModeStand( );
 	bool HasStandYaw( );
 	bool IsStandYawJitter( );
 	bool IsStandYawRotate( );
+	bool ShowStandRotSpeed( );
 	bool IsStandYawRnadom( );
+	bool IsStandYawDistortion( );
+	bool IsStandYawSnap( );
 	bool IsStandDirAuto( );
 	bool IsStandDirCustom( );
 	bool IsAntiAimModeWalk( );
 	bool WalkHasYaw( );
 	bool IsWalkYawJitter( );
 	bool IsWalkYawRotate( );
+	bool ShowWalkRotSpeed( );
 	bool IsWalkYawRandom( );
+	bool IsWalkYawDistortion( );
+	bool IsWalkYawSnap( );
 	bool IsWalkDirAuto( );
 	bool IsWalkDirCustom( );
 	bool IsAntiAimModeAir( );
 	bool AirHasYaw( );
 	bool IsAirYawJitter( );
 	bool IsAirYawRotate( );
+	bool ShowAirRotSpeed( );
 	bool IsAirYawRandom( );
+	bool IsAirYawDistortion( );
+	bool IsAirYawSnap( );
 	bool IsAirDirAuto( );
 	bool IsAirDirCustom( );
 	bool IsFakeAntiAimRelative( );
 	bool IsFakeAntiAimJitter( );
+	bool IsFakeAntiAimSway( );
+	bool IsFakeAntiAimOn( );
 	
 	bool IsConfigMM( );
 	bool IsConfigNS( );

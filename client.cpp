@@ -21,28 +21,9 @@ ulong_t __stdcall Client::init(void* arg) {
 }
 
 void Client::DrawHUD() {
-	if (!g_csgo.m_engine->IsInGame())
-		return;
-
-	// get time.
-	time_t t = std::time(nullptr);
-	std::ostringstream time;
-	time << std::put_time(std::localtime(&t), ("%H:%M:%S"));
-
-	// get round trip time in milliseconds.
-	int ms = std::max(0, (int)std::round(g_cl.m_latency * 1000.f));
-
-	// get tickrate.
-	int rate = (int)std::round(1.f / g_csgo.m_globals->m_interval);
-
-	std::string text = tfm::format(XOR("supremacy | rtt: %ims | rate: %i | %s"), ms, rate, time.str().data());
-	render::FontSize_t size = render::hud.size(text);
-
-	// background.
-	render::rect_filled(m_width - size.m_width - 20, 10, size.m_width + 10, size.m_height + 2, { 240, 110, 140, 130 });
-
-	// text.
-	render::hud.string(m_width - 15, 10, { 240, 160, 180, 250 }, text, render::ALIGN_RIGHT);
+	// Update dynamic data and render the eternal.codes watermark overlay.
+	watermark::updateWatermarkData();
+	watermark::renderWatermark( m_width, m_height );
 }
 
 void Client::KillFeed() {
@@ -612,6 +593,6 @@ void Client::SetClantag()
 	if (!clantag)
 		clantag = pattern::find(g_csgo.m_engine_dll, XOR("53 56 57 8B DA 8B F9 FF 15")).as< int(__fastcall*)(const char*, const char*) >();
 
-	clantag("supremacy", "supremacy");
+	clantag("Eternal.Codes", "Eternal.Codes");
 }
 

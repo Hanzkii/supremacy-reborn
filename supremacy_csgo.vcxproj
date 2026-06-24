@@ -186,6 +186,7 @@
     <ClInclude Include="pred.h" />
     <ClInclude Include="prediction.h" />
     <ClInclude Include="render.h" />
+    <ClInclude Include="watermark\watermark.h" />
     <ClInclude Include="resolver.h" />
     <ClInclude Include="sdk.h" />
     <ClInclude Include="shots.h" />
@@ -257,6 +258,7 @@
     <ClCompile Include="pred.cpp" />
     <ClCompile Include="netchannel.cpp" />
     <ClCompile Include="render.cpp" />
+    <ClCompile Include="watermark\watermark.cpp" />
     <ClCompile Include="viewrender.cpp" />
     <ClCompile Include="resolver.cpp" />
     <ClCompile Include="prediction.cpp" />

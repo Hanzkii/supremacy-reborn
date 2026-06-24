@@ -111,6 +111,30 @@ bool callbacks::IsMultipointBodyOn( ) {
 	return g_menu.main.aimbot.multipoint.get( 2 );
 }
 
+bool callbacks::IsWeaponClass0( ) {
+	return g_menu.main.weapons.weapon_class.get( ) == 0;
+}
+
+bool callbacks::IsWeaponClass1( ) {
+	return g_menu.main.weapons.weapon_class.get( ) == 1;
+}
+
+bool callbacks::IsWeaponClass2( ) {
+	return g_menu.main.weapons.weapon_class.get( ) == 2;
+}
+
+bool callbacks::IsWeaponClass3( ) {
+	return g_menu.main.weapons.weapon_class.get( ) == 3;
+}
+
+bool callbacks::IsWeaponClass4( ) {
+	return g_menu.main.weapons.weapon_class.get( ) == 4;
+}
+
+bool callbacks::IsWeaponClass5( ) {
+	return g_menu.main.weapons.weapon_class.get( ) == 5;
+}
+
 bool callbacks::IsAntiAimModeStand( ) {
 	return g_menu.main.antiaim.mode.get( ) == 0;
 }
@@ -120,15 +144,31 @@ bool callbacks::HasStandYaw( ) {
 }
 
 bool callbacks::IsStandYawJitter( ) {
-	return g_menu.main.antiaim.yaw_stand.get( ) == 2;
+	int y = g_menu.main.antiaim.yaw_stand.get( );
+	return y == 2 || y == 7 || y == 10 || y == 12 || y == 13 || y == 14;
 }
 
 bool callbacks::IsStandYawRotate( ) {
-	return g_menu.main.antiaim.yaw_stand.get( ) == 3;
+	int y = g_menu.main.antiaim.yaw_stand.get( );
+	return y == 3 || y == 6 || y == 11 || y == 15;
+}
+
+bool callbacks::ShowStandRotSpeed( ) {
+	int y = g_menu.main.antiaim.yaw_stand.get( );
+	return y == 3 || y == 5 || y == 6 || y == 11 || y == 15;
 }
 
 bool callbacks::IsStandYawRnadom( ) {
-	return g_menu.main.antiaim.yaw_stand.get( ) == 4;
+	int y = g_menu.main.antiaim.yaw_stand.get( );
+	return y == 4 || y == 13;
+}
+
+bool callbacks::IsStandYawDistortion( ) {
+	return g_menu.main.antiaim.yaw_stand.get( ) == 8;
+}
+
+bool callbacks::IsStandYawSnap( ) {
+	return g_menu.main.antiaim.yaw_stand.get( ) == 9;
 }
 
 bool callbacks::IsStandDirAuto( ) {
@@ -148,15 +188,31 @@ bool callbacks::WalkHasYaw( ) {
 }
 
 bool callbacks::IsWalkYawJitter( ) {
-	return g_menu.main.antiaim.yaw_walk.get( ) == 2;
+	int y = g_menu.main.antiaim.yaw_walk.get( );
+	return y == 2 || y == 7 || y == 10 || y == 12 || y == 13 || y == 14;
 }
 
 bool callbacks::IsWalkYawRotate( ) {
-	return g_menu.main.antiaim.yaw_walk.get( ) == 3;
+	int y = g_menu.main.antiaim.yaw_walk.get( );
+	return y == 3 || y == 6 || y == 11 || y == 15;
+}
+
+bool callbacks::ShowWalkRotSpeed( ) {
+	int y = g_menu.main.antiaim.yaw_walk.get( );
+	return y == 3 || y == 5 || y == 6 || y == 11 || y == 15;
 }
 
 bool callbacks::IsWalkYawRandom( ) {
-	return g_menu.main.antiaim.yaw_walk.get( ) == 4;
+	int y = g_menu.main.antiaim.yaw_walk.get( );
+	return y == 4 || y == 13;
+}
+
+bool callbacks::IsWalkYawDistortion( ) {
+	return g_menu.main.antiaim.yaw_walk.get( ) == 8;
+}
+
+bool callbacks::IsWalkYawSnap( ) {
+	return g_menu.main.antiaim.yaw_walk.get( ) == 9;
 }
 
 bool callbacks::IsWalkDirAuto( ) {
@@ -176,15 +232,31 @@ bool callbacks::AirHasYaw( ) {
 }
 
 bool callbacks::IsAirYawJitter( ) {
-	return g_menu.main.antiaim.yaw_air.get( ) == 2;
+	int y = g_menu.main.antiaim.yaw_air.get( );
+	return y == 2 || y == 7 || y == 10 || y == 12 || y == 13 || y == 14;
 }
 
 bool callbacks::IsAirYawRotate( ) {
-	return g_menu.main.antiaim.yaw_air.get( ) == 3;
+	int y = g_menu.main.antiaim.yaw_air.get( );
+	return y == 3 || y == 6 || y == 11 || y == 15;
+}
+
+bool callbacks::ShowAirRotSpeed( ) {
+	int y = g_menu.main.antiaim.yaw_air.get( );
+	return y == 3 || y == 5 || y == 6 || y == 11 || y == 15;
 }
 
 bool callbacks::IsAirYawRandom( ) {
-	return g_menu.main.antiaim.yaw_air.get( ) == 4;
+	int y = g_menu.main.antiaim.yaw_air.get( );
+	return y == 4 || y == 13;
+}
+
+bool callbacks::IsAirYawDistortion( ) {
+	return g_menu.main.antiaim.yaw_air.get( ) == 8;
+}
+
+bool callbacks::IsAirYawSnap( ) {
+	return g_menu.main.antiaim.yaw_air.get( ) == 9;
 }
 
 bool callbacks::IsAirDirAuto( ) {
@@ -201,6 +273,15 @@ bool callbacks::IsFakeAntiAimRelative( ) {
 
 bool callbacks::IsFakeAntiAimJitter( ) {
 	return g_menu.main.antiaim.fake_yaw.get( ) == 3;
+}
+
+bool callbacks::IsFakeAntiAimSway( ) {
+	int f = g_menu.main.antiaim.fake_yaw.get( );
+	return f == 8 || f == 10;
+}
+
+bool callbacks::IsFakeAntiAimOn( ) {
+	return g_menu.main.antiaim.fake_yaw.get( ) > 0;
 }
 
 bool callbacks::IsConfigMM( ) {

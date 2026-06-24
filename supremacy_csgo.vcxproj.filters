@@ -31,6 +31,9 @@
     <Filter Include="Source Files\hooks\game">
       <UniqueIdentifier>{dc598826-7ed4-4dd9-80fe-8dad20f9bfd0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\watermark">
+      <UniqueIdentifier>{a1b2c3d4-e5f6-7890-abcd-ef1234567890}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Header Files\util\contrib">
       <UniqueIdentifier>{203aec8b-15f9-4e88-b0c7-d51d4a57be52}</UniqueIdentifier>
     </Filter>
@@ -312,6 +315,9 @@
     <ClInclude Include="interfaces.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="watermark\watermark.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bonesetup.cpp">
@@ -469,6 +475,9 @@
     </ClCompile>
     <ClCompile Include="clientstate.cpp">
       <Filter>Source Files\hooks\game</Filter>
+    </ClCompile>
+    <ClCompile Include="watermark\watermark.cpp">
+      <Filter>Source Files\watermark</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

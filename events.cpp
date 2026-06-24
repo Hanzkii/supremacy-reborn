@@ -19,6 +19,7 @@ void events::round_start( IGameEvent* evt ) {
 	// reset hvh / aa stuff.
 	g_hvh.m_next_random_update = 0.f;
 	g_hvh.m_auto_last = 0.f;
+	g_hvh.ResetAutoDirectionData( );
 
 	// reset bomb stuff.
 	g_visuals.m_c4_planted = false;
@@ -89,8 +90,19 @@ void events::player_hurt( IGameEvent* evt ) {
         victim   = g_csgo.m_engine->GetPlayerForUserID( evt->m_keys->FindKey( HASH( "userid" ) )->GetInt( ) );
 
         // a player damaged the local player.
-        if( attacker > 0 && attacker < 64 && victim == g_csgo.m_engine->GetLocalPlayer( ) )
+        if( attacker > 0 && attacker < 64 && victim == g_csgo.m_engine->GetLocalPlayer( ) ) {
             g_visuals.m_offscreen_damage[ attacker ] = { 3.f, 0.f, colors::red };
+
+			Player *attacker_pl = g_csgo.m_entlist->GetClientEntity< Player * >( attacker );
+			if( attacker_pl && g_cl.m_local ) {
+				ang_t ang;
+				vec3_t to_local = g_cl.m_local->WorldSpaceCenter( ) - attacker_pl->WorldSpaceCenter( );
+				math::VectorAngles( to_local, ang );
+
+				int dmg = evt->m_keys->FindKey( HASH( "dmg_health" ) )->GetInt( );
+				g_hvh.RecordDamage( static_cast< float >( dmg ), ang.y );
+			}
+		}
     }
 }
 
