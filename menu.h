@@ -199,6 +199,9 @@ public:
 	Slider	 fake_relative;
 	Slider	 fake_jitter_range;
 	Slider	 fake_shift_factor;
+	Slider	 fake_sway_range;
+	Slider	 fake_sway_speed;
+	Keybind  desync_flip;
 
 	Checkbox      lag_enable;
 	MultiDropdown lag_active;
@@ -220,11 +223,11 @@ public:
 		RegisterElement(&mode);
 
 		// stand.
-		pitch_stand.setup(XOR("pitch"), XOR("pitch_stnd"), { XOR("off"), XOR("down"), XOR("up"), XOR("random"), XOR("ideal"), XOR("zero"), XOR("jitter") });
+		pitch_stand.setup(XOR("pitch"), XOR("pitch_stnd"), { XOR("off"), XOR("down"), XOR("up"), XOR("random"), XOR("ideal"), XOR("zero"), XOR("jitter"), XOR("down jitter"), XOR("zero jitter") });
 		pitch_stand.AddShowCallback(callbacks::IsAntiAimModeStand);
 		RegisterElement(&pitch_stand);
 
-		yaw_stand.setup(XOR("yaw"), XOR("yaw_stnd"), { XOR("off"), XOR("direction"), XOR("jitter"), XOR("rotate"), XOR("random"), XOR("spin"), XOR("sway"), XOR("switch"), XOR("distortion"), XOR("snap"), XOR("3-way"), XOR("pingpong"), XOR("micro"), XOR("rand switch") });
+		yaw_stand.setup(XOR("yaw"), XOR("yaw_stnd"), { XOR("off"), XOR("direction"), XOR("jitter"), XOR("rotate"), XOR("random"), XOR("spin"), XOR("sway"), XOR("switch"), XOR("distortion"), XOR("snap"), XOR("3-way"), XOR("pingpong"), XOR("micro"), XOR("rand switch"), XOR("skitter"), XOR("spin jitter") });
 		yaw_stand.AddShowCallback(callbacks::IsAntiAimModeStand);
 		RegisterElement(&yaw_stand);
 
@@ -306,11 +309,11 @@ public:
 		RegisterElement(&body_fake_stand);
 
 		// walk.
-		pitch_walk.setup(XOR("pitch"), XOR("pitch_walk"), { XOR("off"), XOR("down"), XOR("up"), XOR("random"), XOR("ideal"), XOR("zero"), XOR("jitter") });
+		pitch_walk.setup(XOR("pitch"), XOR("pitch_walk"), { XOR("off"), XOR("down"), XOR("up"), XOR("random"), XOR("ideal"), XOR("zero"), XOR("jitter"), XOR("down jitter"), XOR("zero jitter") });
 		pitch_walk.AddShowCallback(callbacks::IsAntiAimModeWalk);
 		RegisterElement(&pitch_walk);
 
-		yaw_walk.setup(XOR("yaw"), XOR("yaw_walk"), { XOR("off"), XOR("direction"), XOR("jitter"), XOR("rotate"), XOR("random"), XOR("spin"), XOR("sway"), XOR("switch"), XOR("distortion"), XOR("snap"), XOR("3-way"), XOR("pingpong"), XOR("micro"), XOR("rand switch") });
+		yaw_walk.setup(XOR("yaw"), XOR("yaw_walk"), { XOR("off"), XOR("direction"), XOR("jitter"), XOR("rotate"), XOR("random"), XOR("spin"), XOR("sway"), XOR("switch"), XOR("distortion"), XOR("snap"), XOR("3-way"), XOR("pingpong"), XOR("micro"), XOR("rand switch"), XOR("skitter"), XOR("spin jitter") });
 		yaw_walk.AddShowCallback(callbacks::IsAntiAimModeWalk);
 		RegisterElement(&yaw_walk);
 
@@ -382,11 +385,11 @@ public:
 		RegisterElement(&base_angle_walk);
 
 		// air.
-		pitch_air.setup(XOR("pitch"), XOR("pitch_air"), { XOR("off"), XOR("down"), XOR("up"), XOR("random"), XOR("ideal"), XOR("zero"), XOR("jitter") });
+		pitch_air.setup(XOR("pitch"), XOR("pitch_air"), { XOR("off"), XOR("down"), XOR("up"), XOR("random"), XOR("ideal"), XOR("zero"), XOR("jitter"), XOR("down jitter"), XOR("zero jitter") });
 		pitch_air.AddShowCallback(callbacks::IsAntiAimModeAir);
 		RegisterElement(&pitch_air);
 
-		yaw_air.setup(XOR("yaw"), XOR("yaw_air"), { XOR("off"), XOR("direction"), XOR("jitter"), XOR("rotate"), XOR("random"), XOR("spin"), XOR("sway"), XOR("switch"), XOR("distortion"), XOR("snap"), XOR("3-way"), XOR("pingpong"), XOR("micro"), XOR("rand switch") });
+		yaw_air.setup(XOR("yaw"), XOR("yaw_air"), { XOR("off"), XOR("direction"), XOR("jitter"), XOR("rotate"), XOR("random"), XOR("spin"), XOR("sway"), XOR("switch"), XOR("distortion"), XOR("snap"), XOR("3-way"), XOR("pingpong"), XOR("micro"), XOR("rand switch"), XOR("skitter"), XOR("spin jitter") });
 		yaw_air.AddShowCallback(callbacks::IsAntiAimModeAir);
 		RegisterElement(&yaw_air);
 
@@ -463,7 +466,7 @@ public:
 		RegisterElement(&body_fake_air);
 
 		// col2.
-		fake_yaw.setup(XOR("fake yaw"), XOR("fake_yaw"), { XOR("off"), XOR("default"), XOR("relative"), XOR("jitter"), XOR("rotate"), XOR("random"), XOR("local view"), XOR("opposite"), XOR("sway") });
+		fake_yaw.setup(XOR("fake yaw"), XOR("fake_yaw"), { XOR("off"), XOR("default"), XOR("relative"), XOR("jitter"), XOR("rotate"), XOR("random"), XOR("local view"), XOR("opposite"), XOR("sway"), XOR("3-way"), XOR("pingpong") });
 		RegisterElement(&fake_yaw, 1);
 
 		fake_relative.setup("", XOR("fake_relative"), -90.f, 90.f, false, 0, 0.f, 5.f, XOR(L"°"));
@@ -477,6 +480,17 @@ public:
 		fake_shift_factor.setup(XOR("shift factor"), XOR("fake_shift_factor"), 0.f, 200.f, false, 0, 100.f, 5.f, XOR(L"%"));
 		fake_shift_factor.AddShowCallback(callbacks::IsFakeAntiAimOn);
 		RegisterElement(&fake_shift_factor, 1);
+
+		fake_sway_range.setup(XOR("sway range"), XOR("fake_sway_range"), 5.f, 180.f, false, 0, 60.f, 5.f, XOR(L"°"));
+		fake_sway_range.AddShowCallback(callbacks::IsFakeAntiAimSway);
+		RegisterElement(&fake_sway_range, 1);
+
+		fake_sway_speed.setup(XOR("sway speed"), XOR("fake_sway_speed"), 1.f, 30.f, false, 0, 6.f, 1.f);
+		fake_sway_speed.AddShowCallback(callbacks::IsFakeAntiAimSway);
+		RegisterElement(&fake_sway_speed, 1);
+
+		desync_flip.setup(XOR("desync flip"), XOR("desync_flip"));
+		RegisterElement(&desync_flip, 1);
 
 		// col 2.
 		lag_enable.setup(XOR("fake-lag"), XOR("lag_enable"));

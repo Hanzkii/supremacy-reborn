@@ -62,6 +62,7 @@ namespace callbacks {
 	bool IsAirDirCustom( );
 	bool IsFakeAntiAimRelative( );
 	bool IsFakeAntiAimJitter( );
+	bool IsFakeAntiAimSway( );
 	bool IsFakeAntiAimOn( );
 	
 	bool IsConfigMM( );

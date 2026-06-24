@@ -48,6 +48,22 @@ void HVH::AntiAimPitch( ) {
 		break;
 	}
 
+	case 7: {
+		// down jitter ( alternate between fully down and a shallow down each tick ).
+		bool deep = ( ( int )std::floor( g_csgo.m_globals->m_curtime / g_csgo.m_globals->m_interval ) & 1 ) != 0;
+		float deep_pitch = safe ? 89.f : 720.f;
+		float shallow_pitch = safe ? 50.f : 270.f;
+		g_cl.m_cmd->m_view_angles.x = deep ? deep_pitch : shallow_pitch;
+		break;
+	}
+
+	case 8: {
+		// zero jitter ( alternate between zero and fully down each tick ).
+		bool down = ( ( int )std::floor( g_csgo.m_globals->m_curtime / g_csgo.m_globals->m_interval ) & 1 ) != 0;
+		g_cl.m_cmd->m_view_angles.x = down ? ( safe ? 89.f : 720.f ) : 0.f;
+		break;
+	}
+
 	default:
 		break;
 	}
@@ -654,6 +670,23 @@ void HVH::DoRealAntiAim( ) {
 				break;
 			}
 
+				  // skitter ( wide 2-tick edge switch with random noise on top ).
+			case 14: {
+				float half = m_jitter_range / 2.f;
+				bool right = ( ( int )std::floor( g_csgo.m_globals->m_curtime / g_csgo.m_globals->m_interval ) & 1 ) != 0;
+				float noise = g_csgo.RandomFloat( -half * 0.25f, half * 0.25f );
+				g_cl.m_cmd->m_view_angles.y = m_direction + ( right ? half : -half ) + noise;
+				break;
+			}
+
+				  // spin jitter ( continuous spin with random per-tick noise layered on ).
+			case 15: {
+				float spin = std::fmod( g_csgo.m_globals->m_curtime * ( m_rot_speed * 36.f ), 360.f ) - 180.f;
+				float noise = g_csgo.RandomFloat( -m_rot_range / 2.f, m_rot_range / 2.f );
+				g_cl.m_cmd->m_view_angles.y = m_direction + spin + noise;
+				break;
+			}
+
 			default:
 				break;
 			}
@@ -737,8 +770,27 @@ void HVH::DoFakeAntiAim( ) {
 
 		// sway ( smooth oscillation behind the real ).
 	case 8:
-		g_cl.m_cmd->m_view_angles.y = m_direction + 180.f + std::sin( g_csgo.m_globals->m_curtime * 6.f ) * 60.f;
+		g_cl.m_cmd->m_view_angles.y = m_direction + 180.f
+			+ std::sin( g_csgo.m_globals->m_curtime * std::max( m_fake_sway_speed, 0.1f ) ) * ( m_fake_sway_range / 2.f );
 		break;
+
+		// 3-way ( cycle left / center / right behind the real each tick ).
+	case 9: {
+		float half = ( g_menu.main.antiaim.fake_jitter_range.get( ) / 2.f ) * shift;
+		int   phase = ( int )std::floor( g_csgo.m_globals->m_curtime / g_csgo.m_globals->m_interval ) % 3;
+		float off = ( phase == 0 ) ? -half : ( phase == 1 ) ? 0.f : half;
+		g_cl.m_cmd->m_view_angles.y = m_direction + 180.f + off;
+		break;
+	}
+
+		// pingpong ( sharp triangle sweep behind the real ).
+	case 10: {
+		float amp = m_fake_sway_range / 2.f;
+		float phase = std::fmod( g_csgo.m_globals->m_curtime * std::max( m_fake_sway_speed, 0.1f ), 2.f );
+		float tri = ( phase < 1.f ) ? ( phase * 2.f - 1.f ) : ( 3.f - phase * 2.f );
+		g_cl.m_cmd->m_view_angles.y = m_direction + 180.f + tri * amp;
+		break;
+	}
 
 	default:
 		break;
@@ -841,8 +893,10 @@ void HVH::AntiAim( ) {
 		m_snap_speed = g_menu.main.antiaim.snap_speed_air.get( );
 	}
 
-	// shift factor is global across stances.
+	// shift factor + fake sway params are global across stances.
 	m_shift_factor = g_menu.main.antiaim.fake_shift_factor.get( ) / 100.f;
+	m_fake_sway_range = g_menu.main.antiaim.fake_sway_range.get( );
+	m_fake_sway_speed = g_menu.main.antiaim.fake_sway_speed.get( );
 
 	// set pitch.
 	AntiAimPitch( );
@@ -856,6 +910,11 @@ void HVH::AntiAim( ) {
 	// we have no real, but we do have a fake.
 	else if( g_menu.main.antiaim.fake_yaw.get( ) > 0 )
 		m_direction = g_cl.m_cmd->m_view_angles.y;
+
+	// manual desync flip: while the key is held, invert the resolved direction
+	// so the real / fake sides swap ( overrides auto / safe-head side ).
+	if( g_input.GetKeyState( g_menu.main.antiaim.desync_flip.get( ) ) )
+		m_direction += 180.f;
 
 	if( g_menu.main.antiaim.fake_yaw.get( ) ) {
 		// do not allow 2 consecutive sendpacket true if faking angles.

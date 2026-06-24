@@ -57,6 +57,8 @@ public:
 	int    m_snap_step;
 	float  m_snap_speed;
 	float  m_shift_factor;
+	float  m_fake_sway_range;
+	float  m_fake_sway_speed;
 
 	bool   m_step_switch;
 	int    m_random_lag;

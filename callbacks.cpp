@@ -145,17 +145,17 @@ bool callbacks::HasStandYaw( ) {
 
 bool callbacks::IsStandYawJitter( ) {
 	int y = g_menu.main.antiaim.yaw_stand.get( );
-	return y == 2 || y == 7 || y == 10 || y == 12 || y == 13;
+	return y == 2 || y == 7 || y == 10 || y == 12 || y == 13 || y == 14;
 }
 
 bool callbacks::IsStandYawRotate( ) {
 	int y = g_menu.main.antiaim.yaw_stand.get( );
-	return y == 3 || y == 6 || y == 11;
+	return y == 3 || y == 6 || y == 11 || y == 15;
 }
 
 bool callbacks::ShowStandRotSpeed( ) {
 	int y = g_menu.main.antiaim.yaw_stand.get( );
-	return y == 3 || y == 5 || y == 6 || y == 11;
+	return y == 3 || y == 5 || y == 6 || y == 11 || y == 15;
 }
 
 bool callbacks::IsStandYawRnadom( ) {
@@ -189,17 +189,17 @@ bool callbacks::WalkHasYaw( ) {
 
 bool callbacks::IsWalkYawJitter( ) {
 	int y = g_menu.main.antiaim.yaw_walk.get( );
-	return y == 2 || y == 7 || y == 10 || y == 12 || y == 13;
+	return y == 2 || y == 7 || y == 10 || y == 12 || y == 13 || y == 14;
 }
 
 bool callbacks::IsWalkYawRotate( ) {
 	int y = g_menu.main.antiaim.yaw_walk.get( );
-	return y == 3 || y == 6 || y == 11;
+	return y == 3 || y == 6 || y == 11 || y == 15;
 }
 
 bool callbacks::ShowWalkRotSpeed( ) {
 	int y = g_menu.main.antiaim.yaw_walk.get( );
-	return y == 3 || y == 5 || y == 6 || y == 11;
+	return y == 3 || y == 5 || y == 6 || y == 11 || y == 15;
 }
 
 bool callbacks::IsWalkYawRandom( ) {
@@ -233,17 +233,17 @@ bool callbacks::AirHasYaw( ) {
 
 bool callbacks::IsAirYawJitter( ) {
 	int y = g_menu.main.antiaim.yaw_air.get( );
-	return y == 2 || y == 7 || y == 10 || y == 12 || y == 13;
+	return y == 2 || y == 7 || y == 10 || y == 12 || y == 13 || y == 14;
 }
 
 bool callbacks::IsAirYawRotate( ) {
 	int y = g_menu.main.antiaim.yaw_air.get( );
-	return y == 3 || y == 6 || y == 11;
+	return y == 3 || y == 6 || y == 11 || y == 15;
 }
 
 bool callbacks::ShowAirRotSpeed( ) {
 	int y = g_menu.main.antiaim.yaw_air.get( );
-	return y == 3 || y == 5 || y == 6 || y == 11;
+	return y == 3 || y == 5 || y == 6 || y == 11 || y == 15;
 }
 
 bool callbacks::IsAirYawRandom( ) {
@@ -273,6 +273,11 @@ bool callbacks::IsFakeAntiAimRelative( ) {
 
 bool callbacks::IsFakeAntiAimJitter( ) {
 	return g_menu.main.antiaim.fake_yaw.get( ) == 3;
+}
+
+bool callbacks::IsFakeAntiAimSway( ) {
+	int f = g_menu.main.antiaim.fake_yaw.get( );
+	return f == 8 || f == 10;
 }
 
 bool callbacks::IsFakeAntiAimOn( ) {
