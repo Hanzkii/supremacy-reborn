@@ -51,6 +51,13 @@ public:
 	size_t m_base_angle;
 	float  m_auto_time;
 
+	// distortion / snap / shift extensions.
+	float  m_distortion_amount;
+	float  m_distortion_speed;
+	int    m_snap_step;
+	float  m_snap_speed;
+	float  m_shift_factor;
+
 	bool   m_step_switch;
 	int    m_random_lag;
 	float  m_next_random_update;

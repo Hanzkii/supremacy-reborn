@@ -29,6 +29,8 @@ namespace callbacks {
 	bool IsStandYawRotate( );
 	bool ShowStandRotSpeed( );
 	bool IsStandYawRnadom( );
+	bool IsStandYawDistortion( );
+	bool IsStandYawSnap( );
 	bool IsStandDirAuto( );
 	bool IsStandDirCustom( );
 	bool IsAntiAimModeWalk( );
@@ -37,6 +39,8 @@ namespace callbacks {
 	bool IsWalkYawRotate( );
 	bool ShowWalkRotSpeed( );
 	bool IsWalkYawRandom( );
+	bool IsWalkYawDistortion( );
+	bool IsWalkYawSnap( );
 	bool IsWalkDirAuto( );
 	bool IsWalkDirCustom( );
 	bool IsAntiAimModeAir( );
@@ -45,10 +49,13 @@ namespace callbacks {
 	bool IsAirYawRotate( );
 	bool ShowAirRotSpeed( );
 	bool IsAirYawRandom( );
+	bool IsAirYawDistortion( );
+	bool IsAirYawSnap( );
 	bool IsAirDirAuto( );
 	bool IsAirDirCustom( );
 	bool IsFakeAntiAimRelative( );
 	bool IsFakeAntiAimJitter( );
+	bool IsFakeAntiAimOn( );
 	
 	bool IsConfigMM( );
 	bool IsConfigNS( );

@@ -283,6 +283,32 @@ void HVH::GetAntiAimDirection( ) {
 		m_direction = m_view + m_dir_custom;
 		break;
 
+		// safe head ( threat based, hide head on least-shot side ).
+	case 5: {
+		// resolve the threat direction first.
+		AutoDirection( );
+		float threat = m_auto;
+
+		// accumulate recent damage split by which side of the threat axis
+		// it arrived from, so we can steer the head away from the hot side.
+		float left_dmg{ }, right_dmg{ };
+
+		for( const auto &rec : m_damage_records ) {
+			float side = math::NormalizedAngle( rec.m_yaw - threat );
+			if( side >= 0.f )
+				left_dmg += std::max( 1.f, rec.m_damage );
+			else
+				right_dmg += std::max( 1.f, rec.m_damage );
+		}
+
+		// face toward the threat, then bias the body so the head sits on the
+		// side that has historically taken the least damage.
+		float bias = ( left_dmg > right_dmg ) ? -35.f : 35.f;
+
+		m_direction = threat + bias;
+		break;
+	}
+
 	default:
 		break;
 	}
@@ -556,6 +582,76 @@ void HVH::DoRealAntiAim( ) {
 				break;
 			}
 
+				  // distortion ( layered non-uniform desync noise around direction ).
+			case 8: {
+				// combine multiple incommensurate sine waves to produce an
+				// irregular, hard to read oscillation rather than a clean sweep.
+				float t = g_csgo.m_globals->m_curtime * std::max( m_distortion_speed, 0.1f );
+				float amp = m_distortion_amount / 2.f;
+
+				float noise = std::sin( t )
+					+ 0.5f * std::sin( t * 2.37f + 1.3f )
+					+ 0.25f * std::sin( t * 4.91f + 2.1f );
+
+				// normalize to [ -1, 1 ] ( max magnitude of the three terms is 1.75 ).
+				noise /= 1.75f;
+
+				g_cl.m_cmd->m_view_angles.y = m_direction + noise * amp;
+				break;
+			}
+
+				  // snap ( quantize to fixed angular steps, advance over time ).
+			case 9: {
+				// step size in degrees ( clamp to a sane minimum ).
+				float step = std::max( ( float )m_snap_step, 1.f );
+
+				// how many steps to advance through over time.
+				int   slots = std::max( 1, ( int )std::round( 360.f / step ) );
+				int   idx = ( int )std::floor( g_csgo.m_globals->m_curtime * std::max( m_snap_speed, 0.01f ) );
+
+				// quantized offset around the direction.
+				float offset = ( float )( idx % slots ) * step;
+
+				g_cl.m_cmd->m_view_angles.y = m_direction + offset;
+				break;
+			}
+
+				  // 3-way ( left / center / right, cycle each tick ).
+			case 10: {
+				float half = m_jitter_range / 2.f;
+				int   phase = ( int )std::floor( g_csgo.m_globals->m_curtime / g_csgo.m_globals->m_interval ) % 3;
+				float off = ( phase == 0 ) ? -half : ( phase == 1 ) ? 0.f : half;
+				g_cl.m_cmd->m_view_angles.y = m_direction + off;
+				break;
+			}
+
+				  // pingpong ( linear triangle sweep, sharper than sway ).
+			case 11: {
+				float amp = m_rot_range / 2.f;
+				float phase = std::fmod( g_csgo.m_globals->m_curtime * std::max( m_rot_speed, 0.1f ), 2.f );
+				float tri = ( phase < 1.f ) ? ( phase * 2.f - 1.f ) : ( 3.f - phase * 2.f );
+				g_cl.m_cmd->m_view_angles.y = m_direction + tri * amp;
+				break;
+			}
+
+				  // micro jitter ( tiny rapid noise, stays close to direction ).
+			case 12: {
+				float micro = std::max( 1.f, m_jitter_range * 0.15f );
+				g_cl.m_cmd->m_view_angles.y = m_direction + g_csgo.RandomFloat( -micro, micro );
+				break;
+			}
+
+				  // random switch ( pick a side each update window, then hold ).
+			case 13: {
+				if( g_csgo.m_globals->m_curtime >= m_next_random_update ) {
+					float half = m_jitter_range / 2.f;
+					m_random_angle = ( g_csgo.RandomFloat( -1.f, 1.f ) >= 0.f ) ? half : -half;
+					m_next_random_update = g_csgo.m_globals->m_curtime + m_rand_update;
+				}
+				g_cl.m_cmd->m_view_angles.y = m_direction + m_random_angle;
+				break;
+			}
+
 			default:
 				break;
 			}
@@ -578,6 +674,12 @@ void HVH::DoFakeAntiAim( ) {
 	// the fake became the real, think this fixed it.
 	*g_cl.m_packet = true;
 
+	// shift factor scales how aggressively the fake desync deviates from the
+	// clean opposite of the real. 1.0 == default behaviour.
+	float shift = m_shift_factor;
+	if( shift <= 0.f )
+		shift = 1.f;
+
 	switch( g_menu.main.antiaim.fake_yaw.get( ) ) {
 
 		// default.
@@ -585,8 +687,8 @@ void HVH::DoFakeAntiAim( ) {
 		// set base to opposite of direction.
 		g_cl.m_cmd->m_view_angles.y = m_direction + 180.f;
 
-		// apply 45 degree jitter.
-		g_cl.m_cmd->m_view_angles.y += g_csgo.RandomFloat( -90.f, 90.f );
+		// apply 45 degree jitter, scaled by shift factor.
+		g_cl.m_cmd->m_view_angles.y += g_csgo.RandomFloat( -90.f, 90.f ) * shift;
 		break;
 
 		// relative.
@@ -594,14 +696,14 @@ void HVH::DoFakeAntiAim( ) {
 		// set base to opposite of direction.
 		g_cl.m_cmd->m_view_angles.y = m_direction + 180.f;
 
-		// apply offset correction.
-		g_cl.m_cmd->m_view_angles.y += g_menu.main.antiaim.fake_relative.get( );
+		// apply offset correction, scaled by shift factor.
+		g_cl.m_cmd->m_view_angles.y += g_menu.main.antiaim.fake_relative.get( ) * shift;
 		break;
 
 		// relative jitter.
 	case 3: {
-		// get fake jitter range from menu.
-		float range = g_menu.main.antiaim.fake_jitter_range.get( ) / 2.f;
+		// get fake jitter range from menu, scaled by shift factor.
+		float range = ( g_menu.main.antiaim.fake_jitter_range.get( ) / 2.f ) * shift;
 
 		// set base to opposite of direction.
 		g_cl.m_cmd->m_view_angles.y = m_direction + 180.f;
@@ -695,6 +797,10 @@ void HVH::AntiAim( ) {
 		m_yaw_offset = g_menu.main.antiaim.yaw_offset_stand.get( );
 		m_base_angle = g_menu.main.antiaim.base_angle_stand.get( );
 		m_auto_time = g_menu.main.antiaim.dir_time_stand.get( );
+		m_distortion_amount = g_menu.main.antiaim.distortion_amount_stand.get( );
+		m_distortion_speed = g_menu.main.antiaim.distortion_speed_stand.get( );
+		m_snap_step = g_menu.main.antiaim.snap_step_stand.get( );
+		m_snap_speed = g_menu.main.antiaim.snap_speed_stand.get( );
 	}
 
 	else if( m_mode == AntiAimMode::WALK ) {
@@ -709,6 +815,10 @@ void HVH::AntiAim( ) {
 		m_yaw_offset = g_menu.main.antiaim.yaw_offset_walk.get( );
 		m_base_angle = g_menu.main.antiaim.base_angle_walk.get( );
 		m_auto_time = g_menu.main.antiaim.dir_time_walk.get( );
+		m_distortion_amount = g_menu.main.antiaim.distortion_amount_walk.get( );
+		m_distortion_speed = g_menu.main.antiaim.distortion_speed_walk.get( );
+		m_snap_step = g_menu.main.antiaim.snap_step_walk.get( );
+		m_snap_speed = g_menu.main.antiaim.snap_speed_walk.get( );
 	}
 
 	else if( m_mode == AntiAimMode::AIR ) {
@@ -723,7 +833,14 @@ void HVH::AntiAim( ) {
 		m_yaw_offset = g_menu.main.antiaim.yaw_offset_air.get( );
 		m_base_angle = g_menu.main.antiaim.base_angle_air.get( );
 		m_auto_time = g_menu.main.antiaim.dir_time_air.get( );
+		m_distortion_amount = g_menu.main.antiaim.distortion_amount_air.get( );
+		m_distortion_speed = g_menu.main.antiaim.distortion_speed_air.get( );
+		m_snap_step = g_menu.main.antiaim.snap_step_air.get( );
+		m_snap_speed = g_menu.main.antiaim.snap_speed_air.get( );
 	}
+
+	// shift factor is global across stances.
+	m_shift_factor = g_menu.main.antiaim.fake_shift_factor.get( ) / 100.f;
 
 	// set pitch.
 	AntiAimPitch( );
