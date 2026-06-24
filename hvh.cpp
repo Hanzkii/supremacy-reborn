@@ -560,13 +560,15 @@ void HVH::DoRealAntiAim( ) {
 				}
 
 				// apply angle.
-				g_cl.m_cmd->m_view_angles.y = m_random_angle;
+				// anchored to the resolved direction so auto-direction / safe-head biases it.
+				g_cl.m_cmd->m_view_angles.y = m_direction + m_random_angle;
 				break;
 
 				  // spin.
 			case 5:
 				// full 360 spin, speed driven independently of any range.
-				g_cl.m_cmd->m_view_angles.y = std::fmod( g_csgo.m_globals->m_curtime * ( m_rot_speed * 36.f ), 360.f ) - 180.f;
+				// center the spin on the resolved direction so auto-direction anchors the phase.
+				g_cl.m_cmd->m_view_angles.y = m_direction + ( std::fmod( g_csgo.m_globals->m_curtime * ( m_rot_speed * 36.f ), 360.f ) - 180.f );
 				break;
 
 				  // sway ( smooth sine oscillation around direction ).
