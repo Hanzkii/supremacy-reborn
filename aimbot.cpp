@@ -342,10 +342,15 @@ void AimPlayer::OnRoundStart(Player* player) {
 	m_stand_index2 = 0;
 	m_body_index = 0;
 
+	// reset per-engagement resolver brute state.
+	m_pitch_index = 0;
+	m_side = 0;
+
 	m_records.clear();
 	m_hitboxes.clear();
 
 	// IMPORTANT: DO NOT CLEAR LAST HIT SHIT.
+	// ( keep learned m_prefer_stand / m_prefer_air across rounds ).
 }
 
 void AimPlayer::SetupHitboxes(LagRecord* record, bool history) {
