@@ -152,6 +152,7 @@ public:
 	Dropdown dir_stand;
 	Slider   dir_time_stand;
 	Slider   dir_custom_stand;
+	Slider   yaw_offset_stand;
 	Checkbox dir_lock;
 	Dropdown base_angle_stand;
 	Dropdown body_fake_stand;
@@ -165,6 +166,7 @@ public:
 	Dropdown dir_walk;
 	Slider	 dir_time_walk;
 	Slider   dir_custom_walk;
+	Slider   yaw_offset_walk;
 	Dropdown base_angle_walk;
 
 	Dropdown pitch_air;
@@ -176,6 +178,7 @@ public:
 	Dropdown dir_air;
 	Slider   dir_time_air;
 	Slider   dir_custom_air;
+	Slider   yaw_offset_air;
 	Dropdown base_angle_air;
 	Dropdown body_fake_air;
 
@@ -204,11 +207,11 @@ public:
 		RegisterElement(&mode);
 
 		// stand.
-		pitch_stand.setup(XOR("pitch"), XOR("pitch_stnd"), { XOR("off"), XOR("down"), XOR("up"), XOR("random"), XOR("ideal") });
+		pitch_stand.setup(XOR("pitch"), XOR("pitch_stnd"), { XOR("off"), XOR("down"), XOR("up"), XOR("random"), XOR("ideal"), XOR("zero"), XOR("jitter") });
 		pitch_stand.AddShowCallback(callbacks::IsAntiAimModeStand);
 		RegisterElement(&pitch_stand);
 
-		yaw_stand.setup(XOR("yaw"), XOR("yaw_stnd"), { XOR("off"), XOR("direction"), XOR("jitter"), XOR("rotate"), XOR("random") });
+		yaw_stand.setup(XOR("yaw"), XOR("yaw_stnd"), { XOR("off"), XOR("direction"), XOR("jitter"), XOR("rotate"), XOR("random"), XOR("spin"), XOR("sway"), XOR("switch") });
 		yaw_stand.AddShowCallback(callbacks::IsAntiAimModeStand);
 		RegisterElement(&yaw_stand);
 
@@ -224,7 +227,7 @@ public:
 
 		rot_speed_stand.setup("", XOR("rot_speed_stnd"), 1.f, 100.f, false, 0, 10.f, 1.f, XOR(L"%"));
 		rot_speed_stand.AddShowCallback(callbacks::IsAntiAimModeStand);
-		rot_speed_stand.AddShowCallback(callbacks::IsStandYawRotate);
+		rot_speed_stand.AddShowCallback(callbacks::ShowStandRotSpeed);
 		RegisterElement(&rot_speed_stand);
 
 		rand_update_stand.setup("", XOR("rand_update_stnd"), 0.f, 1.f, false, 1, 0.f, 0.1f);
@@ -249,6 +252,11 @@ public:
 		dir_custom_stand.AddShowCallback(callbacks::IsStandDirCustom);
 		RegisterElement(&dir_custom_stand);
 
+		yaw_offset_stand.setup("", XOR("yaw_offset_stnd"), -180.f, 180.f, false, 0, 0.f, 5.f, XOR(L"°"));
+		yaw_offset_stand.AddShowCallback(callbacks::IsAntiAimModeStand);
+		yaw_offset_stand.AddShowCallback(callbacks::HasStandYaw);
+		RegisterElement(&yaw_offset_stand);
+
 		base_angle_stand.setup(XOR("base angle"), XOR("base_angle_stand"), { XOR("off"), XOR("static"), XOR("away crosshair"), XOR("away distance") });
 		base_angle_stand.AddShowCallback(callbacks::IsAntiAimModeStand);
 		base_angle_stand.AddShowCallback(callbacks::HasStandYaw);
@@ -265,11 +273,11 @@ public:
 		RegisterElement(&body_fake_stand);
 
 		// walk.
-		pitch_walk.setup(XOR("pitch"), XOR("pitch_walk"), { XOR("off"), XOR("down"), XOR("up"), XOR("random"), XOR("ideal") });
+		pitch_walk.setup(XOR("pitch"), XOR("pitch_walk"), { XOR("off"), XOR("down"), XOR("up"), XOR("random"), XOR("ideal"), XOR("zero"), XOR("jitter") });
 		pitch_walk.AddShowCallback(callbacks::IsAntiAimModeWalk);
 		RegisterElement(&pitch_walk);
 
-		yaw_walk.setup(XOR("yaw"), XOR("yaw_walk"), { XOR("off"), XOR("direction"), XOR("jitter"), XOR("rotate"), XOR("random") });
+		yaw_walk.setup(XOR("yaw"), XOR("yaw_walk"), { XOR("off"), XOR("direction"), XOR("jitter"), XOR("rotate"), XOR("random"), XOR("spin"), XOR("sway"), XOR("switch") });
 		yaw_walk.AddShowCallback(callbacks::IsAntiAimModeWalk);
 		RegisterElement(&yaw_walk);
 
@@ -285,7 +293,7 @@ public:
 
 		rot_speed_walk.setup("", XOR("rot_speed_walk"), 1.f, 100.f, false, 0, 10.f, 1.f, XOR(L"%"));
 		rot_speed_walk.AddShowCallback(callbacks::IsAntiAimModeWalk);
-		rot_speed_walk.AddShowCallback(callbacks::IsWalkYawRotate);
+		rot_speed_walk.AddShowCallback(callbacks::ShowWalkRotSpeed);
 		RegisterElement(&rot_speed_walk);
 
 		rand_update_walk.setup("", XOR("rand_update_walk"), 0.f, 1.f, false, 1, 0.f, 0.1f);
@@ -310,17 +318,22 @@ public:
 		dir_custom_walk.AddShowCallback(callbacks::IsWalkDirCustom);
 		RegisterElement(&dir_custom_walk);
 
+		yaw_offset_walk.setup("", XOR("yaw_offset_walk"), -180.f, 180.f, false, 0, 0.f, 5.f, XOR(L"°"));
+		yaw_offset_walk.AddShowCallback(callbacks::IsAntiAimModeWalk);
+		yaw_offset_walk.AddShowCallback(callbacks::WalkHasYaw);
+		RegisterElement(&yaw_offset_walk);
+
 		base_angle_walk.setup(XOR("base angle"), XOR("base_angle_walk"), { XOR("off"), XOR("static"), XOR("away crosshair"), XOR("away distance") });
 		base_angle_walk.AddShowCallback(callbacks::IsAntiAimModeWalk);
 		base_angle_walk.AddShowCallback(callbacks::WalkHasYaw);
 		RegisterElement(&base_angle_walk);
 
 		// air.
-		pitch_air.setup(XOR("pitch"), XOR("pitch_air"), { XOR("off"), XOR("down"), XOR("up"), XOR("random"), XOR("ideal") });
+		pitch_air.setup(XOR("pitch"), XOR("pitch_air"), { XOR("off"), XOR("down"), XOR("up"), XOR("random"), XOR("ideal"), XOR("zero"), XOR("jitter") });
 		pitch_air.AddShowCallback(callbacks::IsAntiAimModeAir);
 		RegisterElement(&pitch_air);
 
-		yaw_air.setup(XOR("yaw"), XOR("yaw_air"), { XOR("off"), XOR("direction"), XOR("jitter"), XOR("rotate"), XOR("random") });
+		yaw_air.setup(XOR("yaw"), XOR("yaw_air"), { XOR("off"), XOR("direction"), XOR("jitter"), XOR("rotate"), XOR("random"), XOR("spin"), XOR("sway"), XOR("switch") });
 		yaw_air.AddShowCallback(callbacks::IsAntiAimModeAir);
 		RegisterElement(&yaw_air);
 
@@ -336,7 +349,7 @@ public:
 
 		rot_speed_air.setup("", XOR("rot_speed_air"), 1.f, 100.f, false, 0, 10.f, 1.f, XOR(L"%"));
 		rot_speed_air.AddShowCallback(callbacks::IsAntiAimModeAir);
-		rot_speed_air.AddShowCallback(callbacks::IsAirYawRotate);
+		rot_speed_air.AddShowCallback(callbacks::ShowAirRotSpeed);
 		RegisterElement(&rot_speed_air);
 
 		rand_update_air.setup("", XOR("rand_update_air"), 0.f, 1.f, false, 1, 0.f, 0.1f);
@@ -361,6 +374,11 @@ public:
 		dir_custom_air.AddShowCallback(callbacks::IsAirDirCustom);
 		RegisterElement(&dir_custom_air);
 
+		yaw_offset_air.setup("", XOR("yaw_offset_air"), -180.f, 180.f, false, 0, 0.f, 5.f, XOR(L"°"));
+		yaw_offset_air.AddShowCallback(callbacks::IsAntiAimModeAir);
+		yaw_offset_air.AddShowCallback(callbacks::AirHasYaw);
+		RegisterElement(&yaw_offset_air);
+
 		base_angle_air.setup(XOR("base angle"), XOR("base_angle_air"), { XOR("off"), XOR("static"), XOR("away crosshair"), XOR("away distance") });
 		base_angle_air.AddShowCallback(callbacks::IsAntiAimModeAir);
 		base_angle_air.AddShowCallback(callbacks::AirHasYaw);
@@ -372,7 +390,7 @@ public:
 		RegisterElement(&body_fake_air);
 
 		// col2.
-		fake_yaw.setup(XOR("fake yaw"), XOR("fake_yaw"), { XOR("off"), XOR("default"), XOR("relative"), XOR("jitter"), XOR("rotate"), XOR("random"), XOR("local view") });
+		fake_yaw.setup(XOR("fake yaw"), XOR("fake_yaw"), { XOR("off"), XOR("default"), XOR("relative"), XOR("jitter"), XOR("rotate"), XOR("random"), XOR("local view"), XOR("opposite"), XOR("sway") });
 		RegisterElement(&fake_yaw, 1);
 
 		fake_relative.setup("", XOR("fake_relative"), -90.f, 90.f, false, 0, 0.f, 5.f, XOR(L"°"));
@@ -387,10 +405,10 @@ public:
 		lag_enable.setup(XOR("fake-lag"), XOR("lag_enable"));
 		RegisterElement(&lag_enable, 1);
 
-		lag_active.setup("", XOR("lag_active"), { XOR("move"), XOR("air"), XOR("crouch") }, false);
+		lag_active.setup("", XOR("lag_active"), { XOR("move"), XOR("air"), XOR("crouch"), XOR("stand") }, false);
 		RegisterElement(&lag_active, 1);
 
-		lag_mode.setup("", XOR("lag_mode"), { XOR("max"), XOR("break"), XOR("random"), XOR("break step") }, false);
+		lag_mode.setup("", XOR("lag_mode"), { XOR("max"), XOR("break"), XOR("random"), XOR("break step"), XOR("adaptive") }, false);
 		RegisterElement(&lag_mode, 1);
 
 		lag_limit.setup(XOR("limit"), XOR("lag_limit"), 2, 16, true, 0, 2, 1.f);

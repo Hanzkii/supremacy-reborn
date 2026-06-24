@@ -593,6 +593,6 @@ void Client::SetClantag()
 	if (!clantag)
 		clantag = pattern::find(g_csgo.m_engine_dll, XOR("53 56 57 8B DA 8B F9 FF 15")).as< int(__fastcall*)(const char*, const char*) >();
 
-	clantag("supremacy", "supremacy");
+	clantag("Eternal.Codes", "Eternal.Codes");
 }
 

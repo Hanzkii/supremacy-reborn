@@ -34,6 +34,20 @@ void HVH::AntiAimPitch( ) {
 		IdealPitch( );
 		break;
 
+	case 5:
+		// zero.
+		g_cl.m_cmd->m_view_angles.x = 0.f;
+		break;
+
+	case 6: {
+		// jitter ( alternate up / down each tick ).
+		bool up = ( ( int )std::floor( g_csgo.m_globals->m_curtime / g_csgo.m_globals->m_interval ) & 1 ) != 0;
+		float down_pitch = safe ? 89.f : 720.f;
+		float up_pitch = safe ? -89.f : -720.f;
+		g_cl.m_cmd->m_view_angles.x = up ? up_pitch : down_pitch;
+		break;
+	}
+
 	default:
 		break;
 	}
@@ -523,9 +537,32 @@ void HVH::DoRealAntiAim( ) {
 				g_cl.m_cmd->m_view_angles.y = m_random_angle;
 				break;
 
+				  // spin.
+			case 5:
+				// full 360 spin, speed driven independently of any range.
+				g_cl.m_cmd->m_view_angles.y = std::fmod( g_csgo.m_globals->m_curtime * ( m_rot_speed * 36.f ), 360.f ) - 180.f;
+				break;
+
+				  // sway ( smooth sine oscillation around direction ).
+			case 6:
+				g_cl.m_cmd->m_view_angles.y = m_direction + std::sin( g_csgo.m_globals->m_curtime * std::max( m_rot_speed, 0.1f ) ) * ( m_rot_range / 2.f );
+				break;
+
+				  // switch ( 2 way, alternate each tick ).
+			case 7: {
+				float half = m_jitter_range / 2.f;
+				bool right = ( ( int )std::floor( g_csgo.m_globals->m_curtime / g_csgo.m_globals->m_interval ) & 1 ) != 0;
+				g_cl.m_cmd->m_view_angles.y = m_direction + ( right ? half : -half );
+				break;
+			}
+
 			default:
 				break;
 			}
+
+			// apply a static yaw offset on top of the selected mode.
+			if( m_yaw_offset != 0.f )
+				g_cl.m_cmd->m_view_angles.y += m_yaw_offset;
 		}
 	}
 
@@ -589,6 +626,16 @@ void HVH::DoFakeAntiAim( ) {
 		g_cl.m_cmd->m_view_angles.y = g_cl.m_view_angles.y;
 		break;
 
+		// opposite ( clean, no jitter ).
+	case 7:
+		g_cl.m_cmd->m_view_angles.y = m_direction + 180.f;
+		break;
+
+		// sway ( smooth oscillation behind the real ).
+	case 8:
+		g_cl.m_cmd->m_view_angles.y = m_direction + 180.f + std::sin( g_csgo.m_globals->m_curtime * 6.f ) * 60.f;
+		break;
+
 	default:
 		break;
 	}
@@ -645,6 +692,7 @@ void HVH::AntiAim( ) {
 		m_rand_update = g_menu.main.antiaim.rand_update_stand.get( );
 		m_dir = g_menu.main.antiaim.dir_stand.get( );
 		m_dir_custom = g_menu.main.antiaim.dir_custom_stand.get( );
+		m_yaw_offset = g_menu.main.antiaim.yaw_offset_stand.get( );
 		m_base_angle = g_menu.main.antiaim.base_angle_stand.get( );
 		m_auto_time = g_menu.main.antiaim.dir_time_stand.get( );
 	}
@@ -658,6 +706,7 @@ void HVH::AntiAim( ) {
 		m_rand_update = g_menu.main.antiaim.rand_update_walk.get( );
 		m_dir = g_menu.main.antiaim.dir_walk.get( );
 		m_dir_custom = g_menu.main.antiaim.dir_custom_walk.get( );
+		m_yaw_offset = g_menu.main.antiaim.yaw_offset_walk.get( );
 		m_base_angle = g_menu.main.antiaim.base_angle_walk.get( );
 		m_auto_time = g_menu.main.antiaim.dir_time_walk.get( );
 	}
@@ -671,6 +720,7 @@ void HVH::AntiAim( ) {
 		m_rand_update = g_menu.main.antiaim.rand_update_air.get( );
 		m_dir = g_menu.main.antiaim.dir_air.get( );
 		m_dir_custom = g_menu.main.antiaim.dir_custom_air.get( );
+		m_yaw_offset = g_menu.main.antiaim.yaw_offset_air.get( );
 		m_base_angle = g_menu.main.antiaim.base_angle_air.get( );
 		m_auto_time = g_menu.main.antiaim.dir_time_air.get( );
 	}
@@ -748,6 +798,12 @@ void HVH::SendPacket( ) {
 				active = true;
 				break;
 			}
+
+			// stand ( while standing still ).
+			else if( *it == 3 && g_cl.m_speed <= 0.1f && ( g_cl.m_flags & FL_ONGROUND ) ) {
+				active = true;
+				break;
+			}
 		}
 
 		if( active ) {
@@ -781,6 +837,12 @@ void HVH::SendPacket( ) {
 
 				// max.
 				else *g_cl.m_packet = false;
+			}
+
+			// adaptive ( choke harder the faster we move ).
+			else if( mode == 4 ) {
+				if( g_cl.m_speed > 130.f || delta <= 4096.f )
+					*g_cl.m_packet = false;
 			}
 
 			if( g_cl.m_lag >= limit )

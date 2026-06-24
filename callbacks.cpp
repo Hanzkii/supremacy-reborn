@@ -120,11 +120,18 @@ bool callbacks::HasStandYaw( ) {
 }
 
 bool callbacks::IsStandYawJitter( ) {
-	return g_menu.main.antiaim.yaw_stand.get( ) == 2;
+	int y = g_menu.main.antiaim.yaw_stand.get( );
+	return y == 2 || y == 7;
 }
 
 bool callbacks::IsStandYawRotate( ) {
-	return g_menu.main.antiaim.yaw_stand.get( ) == 3;
+	int y = g_menu.main.antiaim.yaw_stand.get( );
+	return y == 3 || y == 6;
+}
+
+bool callbacks::ShowStandRotSpeed( ) {
+	int y = g_menu.main.antiaim.yaw_stand.get( );
+	return y == 3 || y == 5 || y == 6;
 }
 
 bool callbacks::IsStandYawRnadom( ) {
@@ -148,11 +155,18 @@ bool callbacks::WalkHasYaw( ) {
 }
 
 bool callbacks::IsWalkYawJitter( ) {
-	return g_menu.main.antiaim.yaw_walk.get( ) == 2;
+	int y = g_menu.main.antiaim.yaw_walk.get( );
+	return y == 2 || y == 7;
 }
 
 bool callbacks::IsWalkYawRotate( ) {
-	return g_menu.main.antiaim.yaw_walk.get( ) == 3;
+	int y = g_menu.main.antiaim.yaw_walk.get( );
+	return y == 3 || y == 6;
+}
+
+bool callbacks::ShowWalkRotSpeed( ) {
+	int y = g_menu.main.antiaim.yaw_walk.get( );
+	return y == 3 || y == 5 || y == 6;
 }
 
 bool callbacks::IsWalkYawRandom( ) {
@@ -176,11 +190,18 @@ bool callbacks::AirHasYaw( ) {
 }
 
 bool callbacks::IsAirYawJitter( ) {
-	return g_menu.main.antiaim.yaw_air.get( ) == 2;
+	int y = g_menu.main.antiaim.yaw_air.get( );
+	return y == 2 || y == 7;
 }
 
 bool callbacks::IsAirYawRotate( ) {
-	return g_menu.main.antiaim.yaw_air.get( ) == 3;
+	int y = g_menu.main.antiaim.yaw_air.get( );
+	return y == 3 || y == 6;
+}
+
+bool callbacks::ShowAirRotSpeed( ) {
+	int y = g_menu.main.antiaim.yaw_air.get( );
+	return y == 3 || y == 5 || y == 6;
 }
 
 bool callbacks::IsAirYawRandom( ) {

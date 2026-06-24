@@ -725,7 +725,7 @@ bool AimPlayer::SetupHitboxPoints(LagRecord* record, BoneArray* bones, int index
 	float scale = g_menu.main.aimbot.scale.get() / 100.f;
 
 	// big inair fix.
-	if (!(record->m_pred_flags) & FL_ONGROUND)
+	if (!(record->m_pred_flags & FL_ONGROUND))
 		scale = 0.7f;
 
 	float bscale = g_menu.main.aimbot.body_scale.get() / 100.f;

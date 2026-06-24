@@ -47,6 +47,7 @@ public:
 	float  m_rand_update;
 	int    m_dir;
 	float  m_dir_custom;
+	float  m_yaw_offset;
 	size_t m_base_angle;
 	float  m_auto_time;
 
