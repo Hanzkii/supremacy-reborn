@@ -2,36 +2,6 @@
 
 Aimbot g_aimbot{ };;
 
-namespace {
-	// map the active csgo weapon type to a per-class config group ( 0..5 ),
-	// or -1 when the weapon has no per-class group ( knife / c4 / grenade ).
-	int WeaponConfigClass( ) {
-		switch ( g_cl.m_weapon_type ) {
-		case WEAPONTYPE_PISTOL:        return 0;
-		case WEAPONTYPE_RIFLE:         return 1;
-		case WEAPONTYPE_SNIPER_RIFLE:  return 2;
-		case WEAPONTYPE_MACHINEGUN:    return 3;
-		case WEAPONTYPE_SUBMACHINEGUN: return 4;
-		case WEAPONTYPE_SHOTGUN:       return 5;
-		default:                       return -1;
-		}
-	}
-
-	// returns the per-class group for the active weapon when its override is
-	// enabled, otherwise nullptr ( fall back to the global aimbot settings ).
-	WeaponClassGroup* ActiveWeaponConfig( ) {
-		int idx = WeaponConfigClass( );
-		if ( idx < 0 )
-			return nullptr;
-
-		WeaponClassGroup* g = &g_menu.main.weapons.groups[ idx ];
-		if ( !g->override_cfg.get( ) )
-			return nullptr;
-
-		return g;
-	}
-}
-
 void AimPlayer::UpdateAnimations(LagRecord* record) {
 	CCSGOPlayerAnimState* state = m_player->m_PlayerAnimState();
 	if (!state)
@@ -342,15 +312,10 @@ void AimPlayer::OnRoundStart(Player* player) {
 	m_stand_index2 = 0;
 	m_body_index = 0;
 
-	// reset per-engagement resolver brute state.
-	m_pitch_index = 0;
-	m_side = 0;
-
 	m_records.clear();
 	m_hitboxes.clear();
 
 	// IMPORTANT: DO NOT CLEAR LAST HIT SHIT.
-	// ( keep learned m_prefer_stand / m_prefer_air across rounds ).
 }
 
 void AimPlayer::SetupHitboxes(LagRecord* record, bool history) {
@@ -359,13 +324,6 @@ void AimPlayer::SetupHitboxes(LagRecord* record, bool history) {
 
 	if (g_cl.m_weapon_id == ZEUS) {
 		// hitboxes for the zeus.
-		m_hitboxes.push_back({ HITBOX_BODY, HitscanMode::PREFER });
-		return;
-	}
-
-	// per-weapon-class body-aim override: force body only for this class.
-	WeaponClassGroup* wc = ActiveWeaponConfig();
-	if (wc && wc->baim.get()) {
 		m_hitboxes.push_back({ HITBOX_BODY, HitscanMode::PREFER });
 		return;
 	}
@@ -428,14 +386,6 @@ void AimPlayer::SetupHitboxes(LagRecord* record, bool history) {
 		return;
 
 	std::vector< size_t > hitbox{ history ? g_menu.main.aimbot.hitbox_history.GetActiveIndices() : g_menu.main.aimbot.hitbox.GetActiveIndices() };
-
-	// per-weapon-class hitbox override ( only when this class selects boxes ).
-	if (wc) {
-		std::vector< size_t > wc_hitbox{ wc->hitbox.GetActiveIndices() };
-		if (!wc_hitbox.empty())
-			hitbox = wc_hitbox;
-	}
-
 	if (hitbox.empty())
 		return;
 
@@ -478,10 +428,6 @@ void AimPlayer::SetupHitboxes(LagRecord* record, bool history) {
 void Aimbot::init() {
 	// clear old targets.
 	m_targets.clear();
-
-	// keep capacity across ticks so we never reallocate while collecting targets.
-	if (m_targets.capacity() < 64)
-		m_targets.reserve(64);
 
 	m_target = nullptr;
 	m_aim = vec3_t{ };
@@ -716,13 +662,7 @@ bool Aimbot::CheckHitchance(Player* player, const ang_t& angle) {
 	vec3_t     start{ g_cl.m_shoot_pos }, end, fwd, right, up, dir, wep_spread;
 	float      inaccuracy, spread;
 	CGameTrace tr;
-	// per-weapon-class hitchance override ( 0 = keep global ).
-	float      hc_amount = g_menu.main.aimbot.hitchance_amount.get();
-	WeaponClassGroup* wc = ActiveWeaponConfig();
-	if (wc && wc->hitchance.get() > 0.f)
-		hc_amount = wc->hitchance.get();
-
-	size_t     total_hits{ }, needed_hits{ (size_t)std::ceil((hc_amount * SEED_MAX) / HITCHANCE_MAX) };
+	size_t     total_hits{ }, needed_hits{ (size_t)std::ceil((g_menu.main.aimbot.hitchance_amount.get() * SEED_MAX) / HITCHANCE_MAX) };
 
 	// get needed directional vectors.
 	math::AngleVectors(angle, &fwd, &right, &up);
@@ -761,12 +701,19 @@ bool Aimbot::CheckHitchance(Player* player, const ang_t& angle) {
 	return false;
 }
 
-bool AimPlayer::SetupHitboxPoints(LagRecord* record, BoneArray* bones, mstudiohitboxset_t* set, int index, std::vector< vec3_t >& points) {
+bool AimPlayer::SetupHitboxPoints(LagRecord* record, BoneArray* bones, int index, std::vector< vec3_t >& points) {
 	// reset points.
 	points.clear();
 
-	// hitbox set is resolved once per scan by the caller, no need to walk
-	// model -> studiohdr -> hitboxset for every single hitbox.
+	const model_t* model = m_player->GetModel();
+	if (!model)
+		return false;
+
+	studiohdr_t* hdr = g_csgo.m_model_info->GetStudioModel(model);
+	if (!hdr)
+		return false;
+
+	mstudiohitboxset_t* set = hdr->GetHitboxSet(m_player->m_nHitboxSet());
 	if (!set)
 		return false;
 
@@ -778,7 +725,7 @@ bool AimPlayer::SetupHitboxPoints(LagRecord* record, BoneArray* bones, mstudiohi
 	float scale = g_menu.main.aimbot.scale.get() / 100.f;
 
 	// big inair fix.
-	if (!(record->m_pred_flags & FL_ONGROUND))
+	if (!(record->m_pred_flags) & FL_ONGROUND)
 		scale = 0.7f;
 
 	float bscale = g_menu.main.aimbot.body_scale.get() / 100.f;
@@ -953,7 +900,6 @@ bool AimPlayer::GetBestAimPosition(vec3_t& aim, float& damage, LagRecord* record
 	float                 dmg, pendmg;
 	HitscanData_t         scan;
 	std::vector< vec3_t > points;
-	points.reserve(8);
 
 	// get player hp.
 	int hp = std::min(100, m_player->m_iHealth());
@@ -965,12 +911,6 @@ bool AimPlayer::GetBestAimPosition(vec3_t& aim, float& damage, LagRecord* record
 
 	else {
 		dmg = g_menu.main.aimbot.minimal_damage.get();
-
-		// per-weapon-class minimal damage override ( 0 = keep global ).
-		WeaponClassGroup* wc = ActiveWeaponConfig();
-		if (wc && wc->min_damage.get() > 0.f)
-			dmg = wc->min_damage.get();
-
 		if (g_menu.main.aimbot.minimal_damage_hp.get())
 		{
 			//std::ceil((dmg / 100.f) * hp);
@@ -999,25 +939,12 @@ bool AimPlayer::GetBestAimPosition(vec3_t& aim, float& damage, LagRecord* record
 	// write all data of this record l0l.
 	record->cache();
 
-	// resolve the hitbox set once for this scan instead of per hitbox.
-	const model_t* model = m_player->GetModel();
-	if (!model)
-		return false;
-
-	studiohdr_t* hdr = g_csgo.m_model_info->GetStudioModel(model);
-	if (!hdr)
-		return false;
-
-	mstudiohitboxset_t* set = hdr->GetHitboxSet(m_player->m_nHitboxSet());
-	if (!set)
-		return false;
-
 	// iterate hitboxes.
 	for (const auto& it : m_hitboxes) {
 		done = false;
 
 		// setup points on hitbox.
-		if (!SetupHitboxPoints(record, record->m_bones, set, it.m_index, points))
+		if (!SetupHitboxPoints(record, record->m_bones, it.m_index, points))
 			continue;
 
 		// iterate points on hitbox.
@@ -1104,14 +1031,8 @@ bool Aimbot::SelectTarget(LagRecord* record, const vec3_t& aim, float damage) {
 
 	// fov check.
 	if (g_menu.main.aimbot.fov.get()) {
-		// per-weapon-class fov override ( 0 = keep global ).
-		float fov_amount = g_menu.main.aimbot.fov_amount.get();
-		WeaponClassGroup* wc = ActiveWeaponConfig();
-		if (wc && wc->fov.get() > 0.f)
-			fov_amount = wc->fov.get();
-
 		// if out of fov, retn false.
-		if (math::GetFOV(g_cl.m_view_angles, g_cl.m_shoot_pos, aim) > fov_amount)
+		if (math::GetFOV(g_cl.m_view_angles, g_cl.m_shoot_pos, aim) > g_menu.main.aimbot.fov_amount.get())
 			return false;
 	}
 

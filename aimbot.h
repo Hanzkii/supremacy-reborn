@@ -57,19 +57,6 @@ public:
 	int m_stand_index2;
 	int m_body_index;
 
-	// resolver v2 ( animation + delta + server feedback ) state.
-	int   m_side;         // last resolved desync side ( -1 left / 0 / +1 right ).
-	int   m_pitch_index;  // brute index for pitch resolution ( zero / down / up ).
-
-	// server-based learning: offsets that produced a head hit per resolve mode.
-	float m_prefer_stand; // learned ( eye_yaw - lby ) when standing.
-	float m_prefer_air;   // learned ( eye_yaw - away ) when airborne.
-	bool  m_has_stand;    // whether a learned stand offset exists.
-	bool  m_has_air;      // whether a learned air offset exists.
-
-	// rotation ( spin / jitter ) detection state.
-	float m_last_eye_yaw; // eye yaw of the previous resolved record.
-	float m_yaw_rate;     // smoothed per-tick yaw delta ( deg ).
 
 	// data about the LBY proxy.
 	float m_body;
@@ -84,7 +71,7 @@ public:
 	void OnNetUpdate( Player* player );
 	void OnRoundStart( Player* player );
 	void SetupHitboxes( LagRecord* record, bool history );
-	bool SetupHitboxPoints( LagRecord* record, BoneArray* bones, mstudiohitboxset_t* set, int index, std::vector< vec3_t >& points );
+	bool SetupHitboxPoints( LagRecord* record, BoneArray* bones, int index, std::vector< vec3_t >& points );
 	bool GetBestAimPosition( vec3_t& aim, float& damage, LagRecord* record );
 
 public:
@@ -94,15 +81,6 @@ public:
 		m_walk_record  = LagRecord{};
 		m_shots        = 0;
 		m_missed_shots = 0;
-
-		m_side         = 0;
-		m_pitch_index  = 0;
-		m_prefer_stand = 0.f;
-		m_prefer_air   = 0.f;
-		m_has_stand    = false;
-		m_has_air      = false;
-		m_last_eye_yaw = 0.f;
-		m_yaw_rate     = 0.f;
 
 		m_records.clear( );
 		m_hitboxes.clear( );

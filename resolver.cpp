@@ -104,80 +104,6 @@ float Resolver::GetAwayAngle( LagRecord* record ) {
 	//return away.y;
 }
 
-float Resolver::GetMaxDesync( LagRecord* record ) {
-	// the animation state clamps the lower body to ~58-60 deg from the eye
-	// yaw while standing; that window shrinks as the player runs.
-	float speed = record->m_anim_velocity.length_2d( );
-
-	// running scale ( 0 standing .. 1 at/above run speed ~260 ).
-	float run = speed / 260.f;
-	math::clamp( run, 0.f, 1.f );
-
-	// 60 deg standing down to ~30 deg while moving.
-	return 60.f - ( run * 30.f );
-}
-
-float Resolver::AnimationSide( AimPlayer* data, LagRecord* record ) {
-	// delta-based signal: networked eye yaw vs the lower body yaw target.
-	float lby_delta = math::NormalizedAngle( record->m_eye_angles.y - record->m_body );
-
-	// animation-based signal: the foot yaw the animstate settled on.
-	float anim_delta = 0.f;
-	CCSGOPlayerAnimState* state = data->m_player->m_PlayerAnimState( );
-	if( state )
-		anim_delta = math::NormalizedAngle( record->m_eye_angles.y - state->m_goal_feet_yaw );
-
-	// combine both signals; the sign indicates which way the body is turned.
-	float sum = lby_delta + anim_delta;
-
-	if( sum > 5.f )
-		return 1.f;   // body turned to the right of the eye yaw.
-
-	if( sum < -5.f )
-		return -1.f;  // body turned to the left of the eye yaw.
-
-	return 0.f;
-}
-
-void Resolver::ResolvePitch( AimPlayer* data, LagRecord* record ) {
-	// the 3 pitches that fake-pitch anti-aims pin to: zero / fake-down / fake-up.
-	static const float pitches[ 3 ] = { 0.f, 89.f, -89.f };
-
-	bool nospread = g_menu.main.config.mode.get( ) == 1;
-
-	// a faked pitch sits pinned at an extreme value.
-	bool faked = std::abs( record->m_eye_angles.x ) > 85.f;
-
-	// in matchmaking with a believable pitch, trust the networked value.
-	if( !nospread && !faked )
-		return;
-
-	// bruteforce the 3 possible pitches, advanced by miss feedback.
-	record->m_eye_angles.x = pitches[ ( ( data->m_pitch_index % 3 ) + 3 ) % 3 ];
-}
-
-bool Resolver::DetectRotation( AimPlayer* data, LagRecord* record, float& predicted ) {
-	// raw networked yaw ( resolve hasn't overwritten it yet ).
-	float raw = record->m_eye_angles.y;
-
-	// per-tick change since the previous resolved record.
-	float delta = math::NormalizedAngle( raw - data->m_last_eye_yaw );
-
-	bool result = false;
-
-	// spinning: a large, consistent same-direction change two ticks in a row.
-	if( std::abs( delta ) > 22.f && std::abs( data->m_yaw_rate ) > 22.f
-		&& ( delta * data->m_yaw_rate ) > 0.f ) {
-		// predict where the spin continues to next tick.
-		predicted = math::NormalizedAngle( raw + delta );
-		result = true;
-	}
-
-	// remember the rate for the next tick.
-	data->m_yaw_rate = delta;
-	return result;
-}
-
 void Resolver::MatchShot( AimPlayer* data, LagRecord* record ) {
 	// do not attempt to do this in nospread mode.
 	if( g_menu.main.config.mode.get( ) == 1 )
@@ -236,17 +162,11 @@ void Resolver::ResolveAngles( Player* player, LagRecord* record ) {
 	// next up mark this record with a resolver mode that will be used.
 	SetMode( record );
 
-	// raw networked yaw before any resolver overwrites it ( rotation delta ).
-	float raw_yaw = record->m_eye_angles.y;
-
-	// resolve the pitch ( zero / fake-down / fake-up ) using miss feedback.
-	// this replaces the old 'force pitch to 90' nospread behaviour and also
-	// brute-forces faked pitches in matchmaking.
-	ResolvePitch( data, record );
-
-	// detect spinning / jitter anti-aim and predict its continuation.
-	float predicted = 0.f;
-	bool rotating = DetectRotation( data, record, predicted );
+	// if we are in nospread mode, force all players pitches to down.
+	// TODO; we should check thei actual pitch and up too, since those are the other 2 possible angles.
+	// this should be somehow combined into some iteration that matches with the air angle iteration.
+	if( g_menu.main.config.mode.get( ) == 1 )
+		record->m_eye_angles.x = 90.f;
 
 	// we arrived here we can do the acutal resolve.
 	if( record->m_mode == Modes::RESOLVE_WALK ) 
@@ -257,14 +177,6 @@ void Resolver::ResolveAngles( Player* player, LagRecord* record ) {
 
 	else if( record->m_mode == Modes::RESOLVE_AIR )
 		ResolveAir( data, record );
-
-	// a rotating player networks a moving real yaw; the brute resolvers
-	// fight against that, so override them with the predicted continuation.
-	if( rotating )
-		record->m_eye_angles.y = predicted;
-
-	// store the raw yaw for the next tick's rotation delta.
-	data->m_last_eye_yaw = raw_yaw;
 
 	// normalize the eye angles, doesn't really matter but its clean.
 	math::NormalizeAngle( record->m_eye_angles.y );
@@ -282,13 +194,6 @@ void Resolver::ResolveWalk( AimPlayer* data, LagRecord* record ) {
 	data->m_stand_index2 = 0;
 	data->m_body_index   = 0;
 
-	// a walking player reveals real angles, so reset brute state.
-	data->m_pitch_index  = 0;
-	data->m_missed_shots = 0;
-
-	// store the away angle for server-feedback learning.
-	record->m_away = GetAwayAngle( record );
-
 	// copy the last record that this player was walking
 	// we need it later on because it gives us crucial data.
 	std::memcpy( &data->m_walk_record, record, sizeof( LagRecord ) );
@@ -301,12 +206,8 @@ void Resolver::ResolveStand( AimPlayer* data, LagRecord* record ) {
 		return;
 	}
 
-	// get predicted away angle for the player and remember it for feedback.
+	// get predicted away angle for the player.
 	float away = GetAwayAngle( record );
-	record->m_away = away;
-
-	// max desync window for this record ( animation based ).
-	float maxdesync = GetMaxDesync( record );
 
 	// pointer for easy access.
 	LagRecord* move = &data->m_walk_record;
@@ -324,6 +225,7 @@ void Resolver::ResolveStand( AimPlayer* data, LagRecord* record ) {
 
 	// a valid moving context was found
 	if( data->m_moved ) {
+		float diff = math::NormalizedAngle( record->m_body - move->m_body );
 		float delta = record->m_anim_time - move->m_anim_time;
 
 		// it has not been time for this first update yet.
@@ -357,62 +259,59 @@ void Resolver::ResolveStand( AimPlayer* data, LagRecord* record ) {
 
 			// set to stand1 -> known last move.
 			record->m_mode = Modes::RESOLVE_STAND1;
+
+			C_AnimationLayer* curr = &record->m_layers[ 3 ];
+			int act = data->m_player->GetSequenceActivity( curr->m_sequence );
+
+			// ok, no fucking update. apply big resolver.
+			record->m_eye_angles.y = move->m_body;
+
+			// every third shot do some fuckery.
+			if ( !( data->m_stand_index % 3 ) )
+				record->m_eye_angles.y += g_csgo.RandomFloat( -35.f, 35.f );
+
+			// jesus we can fucking stop missing can we?
+			if( data->m_stand_index > 6 && act != 980 ) {
+				// lets just hope they switched ang after move.
+				record->m_eye_angles.y = move->m_body + 180.f;
+			}
+
+			// we missed 4 shots.
+			else if( data->m_stand_index > 4 && act != 980 ) {
+				// try backwards.
+				record->m_eye_angles.y = away + 180.f;
+			}
+
+			return;
 		}
 	}
 
-	// no moving context -> pure standing desync.
-	if( record->m_mode != Modes::RESOLVE_STAND1 )
-		record->m_mode = Modes::RESOLVE_STAND2;
+	// stand2 -> no known last move.
+	record->m_mode = Modes::RESOLVE_STAND2;
 
-	// base yaw we desync around: last-known LBY when we moved, else networked LBY.
-	float base = ( record->m_mode == Modes::RESOLVE_STAND1 ) ? move->m_body : record->m_body;
+	switch( data->m_stand_index2 % 6 ) {
 
-	// server-based resolving: if a head hit taught us an offset and we have
-	// not started missing, trust the learned angle first. the offset is stored
-	// relative to the networked lby so it tracks the player.
-	if( data->m_has_stand && data->m_missed_shots < 1 ) {
-		record->m_eye_angles.y = record->m_body + data->m_prefer_stand;
-		return;
-	}
-
-	// animation + delta based side seed.
-	float seed = AnimationSide( data, record );
-	int   side = ( seed >= 0.f ) ? 1 : -1;
-	data->m_side = side;
-
-	// shared brute index for stand1 ( known move ) and stand2 ( no move ).
-	int idx = ( record->m_mode == Modes::RESOLVE_STAND1 )
-		? data->m_stand_index : data->m_stand_index2;
-
-	// desync / side bruteforce ordered by likelihood.
-	switch( idx % 6 ) {
 	case 0:
-		// seeded side at max desync.
-		record->m_eye_angles.y = base + side * maxdesync;
-		break;
-
-	case 1:
-		// opposite side at max desync.
-		record->m_eye_angles.y = base - side * maxdesync;
-		break;
-
-	case 2:
-		// zero desync ( facing the lby ).
-		record->m_eye_angles.y = base;
-		break;
-
-	case 3:
-		// flipped lby ( switched after stopping ).
-		record->m_eye_angles.y = base + 180.f;
-		break;
-
-	case 4:
-		// away-based backwards.
 		record->m_eye_angles.y = away + 180.f;
 		break;
 
+	case 1:
+		record->m_eye_angles.y = record->m_body;
+		break;
+
+	case 2:
+		record->m_eye_angles.y = record->m_body + 180.f;
+		break;
+
+	case 3:
+		record->m_eye_angles.y = record->m_body + 110.f;
+		break;
+
+	case 4:
+		record->m_eye_angles.y = record->m_body - 110.f;
+		break;
+
 	case 5:
-		// straight at us.
 		record->m_eye_angles.y = away;
 		break;
 
@@ -422,9 +321,8 @@ void Resolver::ResolveStand( AimPlayer* data, LagRecord* record ) {
 }
 
 void Resolver::StandNS( AimPlayer* data, LagRecord* record ) {
-	// get away angles and remember them for server-feedback learning.
+	// get away angles.
 	float away = GetAwayAngle( record );
-	record->m_away = away;
 
 	switch( data->m_shots % 8 ) {
 	case 0:
@@ -493,15 +391,6 @@ void Resolver::ResolveAir( AimPlayer* data, LagRecord* record ) {
 	// this should be a rough estimation of where he is looking.
 	float velyaw = math::rad_to_deg( std::atan2( record->m_velocity.y, record->m_velocity.x ) );
 
-	// store the reference angle for server-feedback learning.
-	record->m_away = velyaw;
-
-	// server-based resolving: trust a learned air offset before brute forcing.
-	if( data->m_has_air && data->m_missed_shots < 1 ) {
-		record->m_eye_angles.y = velyaw + data->m_prefer_air;
-		return;
-	}
-
 	switch( data->m_shots % 3 ) {
 	case 0:
 		record->m_eye_angles.y = velyaw + 180.f;
@@ -518,9 +407,8 @@ void Resolver::ResolveAir( AimPlayer* data, LagRecord* record ) {
 }
 
 void Resolver::AirNS( AimPlayer* data, LagRecord* record ) {
-	// get away angles and remember them for server-feedback learning.
+	// get away angles.
 	float away = GetAwayAngle( record );
-	record->m_away = away;
 
 	switch( data->m_shots % 9 ) {
 	case 0:

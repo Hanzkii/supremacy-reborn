@@ -198,7 +198,6 @@ bool CSGO::init( ) {
 
 	g_listener.init( );
 	render::init( );
-	watermark::initializeWatermark( );
 	g_menu.init( );
 	g_config.LoadHotkeys( );
 	g_chams.init( );

@@ -182,16 +182,11 @@ void Shots::OnImpact( IGameEvent *evt ) {
 		if ( mode == Resolver::Modes::RESOLVE_BODY )
 			++data->m_body_index;
 
-		// stand and stand1 ( known last move ) share the brute index.
-		else if ( mode == Resolver::Modes::RESOLVE_STAND
-			|| mode == Resolver::Modes::RESOLVE_STAND1 )
+		else if ( mode == Resolver::Modes::RESOLVE_STAND )
 			++data->m_stand_index;
 
 		else if ( mode == Resolver::Modes::RESOLVE_STAND2 )
 			++data->m_stand_index2;
-
-		// advance the pitch bruteforce ( zero / down / up ) on a wrong-angle miss.
-		++data->m_pitch_index;
 
 		++data->m_missed_shots;
 	}
@@ -319,9 +314,6 @@ void Shots::OnHurt( IGameEvent *evt ) {
 	// we hit, reset missed shots counter.
 	data->m_missed_shots = 0;
 
-	// the current pitch guess worked, lock onto it.
-	data->m_pitch_index = 0;
-
 	size_t mode = impact->m_shot->m_record->m_mode;
 
 	// if we miss a shot on body update.
@@ -329,38 +321,35 @@ void Shots::OnHurt( IGameEvent *evt ) {
 	if ( mode == Resolver::Modes::RESOLVE_BODY && data->m_body_index > 0 )
 		--data->m_body_index;
 
-	else if ( ( mode == Resolver::Modes::RESOLVE_STAND
-		|| mode == Resolver::Modes::RESOLVE_STAND1 ) && data->m_stand_index > 0 )
+	else if ( mode == Resolver::Modes::RESOLVE_STAND && data->m_stand_index > 0 )
 		--data->m_stand_index;
 
 	else if ( mode == Resolver::Modes::RESOLVE_STAND2 && data->m_stand_index2 > 0 )
 		--data->m_stand_index2;
 
-	// if we hit head, learn the angle that worked ( server-based resolving ).
-	// the offset is stored relative to the reference angle for that mode so it
-	// stays valid as the player's lby / velocity changes.
+	// if we hit head
+	// shoot at this 5 more times.
 	if ( group == HITGROUP_HEAD ) {
 		LagRecord *record = hit.m_impact->m_shot->m_record;
 
-		switch ( record->m_mode ) {
-		case Resolver::Modes::RESOLVE_STAND:
-		case Resolver::Modes::RESOLVE_STAND1:
-		case Resolver::Modes::RESOLVE_STAND2:
-		case Resolver::Modes::RESOLVE_BODY:
-		case Resolver::Modes::RESOLVE_STOPPED_MOVING:
-			// remember the working desync offset from the lby.
-			data->m_prefer_stand = math::NormalizedAngle( record->m_eye_angles.y - record->m_body );
-			data->m_has_stand = true;
-			break;
+		//switch( record->m_mode ) {
+		//case Resolver::Modes::RESOLVE_STAND:
+		//	data->m_prefer_stand.clear( );
+		//	data->m_prefer_stand.push_front( math::NormalizedAngle( record->m_eye_angles.y - record->m_lbyt ) );
+		//	break;
 
-		case Resolver::Modes::RESOLVE_AIR:
-			// remember the working offset from the velocity yaw.
-			data->m_prefer_air = math::NormalizedAngle( record->m_eye_angles.y - record->m_away );
-			data->m_has_air = true;
-			break;
+		//case Resolver::Modes::RESOLVE_AIR:
+		//	if( g_menu.main.config.mode.get( ) == 1 ) {
+		//		data->m_prefer_air.clear( );
+		//		data->m_prefer_air.push_front( math::NormalizedAngle( record->m_eye_angles.y - record->m_away ) );
+		//
+		//		g_notify.add( tfm::format( "air hit %f\n", data->m_prefer_air.front( ) ) );
+		//	}
+		//
+		//	break;
 
-		default:
-			break;
-		}
+		//default:
+		//	break;
+		//}
 	}
 }
