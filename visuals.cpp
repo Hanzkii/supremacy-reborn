@@ -1480,10 +1480,23 @@ void Visuals::DebugAimbotPoints( Player* player ) {
 	if( data->m_hitboxes.empty( ) )
 		return;
 
+	// resolve the hitbox set once for this player.
+	const model_t* model = player->GetModel( );
+	if( !model )
+		return;
+
+	studiohdr_t* hdr = g_csgo.m_model_info->GetStudioModel( model );
+	if( !hdr )
+		return;
+
+	mstudiohitboxset_t* set = hdr->GetHitboxSet( player->m_nHitboxSet( ) );
+	if( !set )
+		return;
+
 	for( const auto& it : data->m_hitboxes ) {
 		std::vector< vec3_t > p1{ };
 
-		if( !data->SetupHitboxPoints( front, matrix, it.m_index, p1 ) )
+		if( !data->SetupHitboxPoints( front, matrix, set, it.m_index, p1 ) )
 			continue;
 
 		for( auto& p : p1 )

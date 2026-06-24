@@ -429,6 +429,10 @@ void Aimbot::init() {
 	// clear old targets.
 	m_targets.clear();
 
+	// keep capacity across ticks so we never reallocate while collecting targets.
+	if (m_targets.capacity() < 64)
+		m_targets.reserve(64);
+
 	m_target = nullptr;
 	m_aim = vec3_t{ };
 	m_angle = ang_t{ };
@@ -701,19 +705,12 @@ bool Aimbot::CheckHitchance(Player* player, const ang_t& angle) {
 	return false;
 }
 
-bool AimPlayer::SetupHitboxPoints(LagRecord* record, BoneArray* bones, int index, std::vector< vec3_t >& points) {
+bool AimPlayer::SetupHitboxPoints(LagRecord* record, BoneArray* bones, mstudiohitboxset_t* set, int index, std::vector< vec3_t >& points) {
 	// reset points.
 	points.clear();
 
-	const model_t* model = m_player->GetModel();
-	if (!model)
-		return false;
-
-	studiohdr_t* hdr = g_csgo.m_model_info->GetStudioModel(model);
-	if (!hdr)
-		return false;
-
-	mstudiohitboxset_t* set = hdr->GetHitboxSet(m_player->m_nHitboxSet());
+	// hitbox set is resolved once per scan by the caller, no need to walk
+	// model -> studiohdr -> hitboxset for every single hitbox.
 	if (!set)
 		return false;
 
@@ -900,6 +897,7 @@ bool AimPlayer::GetBestAimPosition(vec3_t& aim, float& damage, LagRecord* record
 	float                 dmg, pendmg;
 	HitscanData_t         scan;
 	std::vector< vec3_t > points;
+	points.reserve(8);
 
 	// get player hp.
 	int hp = std::min(100, m_player->m_iHealth());
@@ -939,12 +937,25 @@ bool AimPlayer::GetBestAimPosition(vec3_t& aim, float& damage, LagRecord* record
 	// write all data of this record l0l.
 	record->cache();
 
+	// resolve the hitbox set once for this scan instead of per hitbox.
+	const model_t* model = m_player->GetModel();
+	if (!model)
+		return false;
+
+	studiohdr_t* hdr = g_csgo.m_model_info->GetStudioModel(model);
+	if (!hdr)
+		return false;
+
+	mstudiohitboxset_t* set = hdr->GetHitboxSet(m_player->m_nHitboxSet());
+	if (!set)
+		return false;
+
 	// iterate hitboxes.
 	for (const auto& it : m_hitboxes) {
 		done = false;
 
 		// setup points on hitbox.
-		if (!SetupHitboxPoints(record, record->m_bones, it.m_index, points))
+		if (!SetupHitboxPoints(record, record->m_bones, set, it.m_index, points))
 			continue;
 
 		// iterate points on hitbox.

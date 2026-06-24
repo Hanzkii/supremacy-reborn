@@ -71,7 +71,7 @@ public:
 	void OnNetUpdate( Player* player );
 	void OnRoundStart( Player* player );
 	void SetupHitboxes( LagRecord* record, bool history );
-	bool SetupHitboxPoints( LagRecord* record, BoneArray* bones, int index, std::vector< vec3_t >& points );
+	bool SetupHitboxPoints( LagRecord* record, BoneArray* bones, mstudiohitboxset_t* set, int index, std::vector< vec3_t >& points );
 	bool GetBestAimPosition( vec3_t& aim, float& damage, LagRecord* record );
 
 public:

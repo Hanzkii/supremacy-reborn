@@ -100,6 +100,55 @@ void Movement::Strafe( ) {
 		g_cl.m_cmd->m_view_angles.y += ( factor * std::sin( freq ) );
 	}
 
+	// wasd autostrafer: instead of following the mouse, strafe towards the
+	// direction implied by the movement keys ( w / a / s / d ) and keep
+	// gaining speed along that direction.
+	if( g_menu.main.movement.wasd_strafe.get( ) ) {
+		// build a wish direction out of the held movement keys.
+		float wish_fwd = 0.f, wish_side = 0.f;
+
+		if( g_cl.m_buttons & IN_FORWARD )   wish_fwd  += 1.f;
+		if( g_cl.m_buttons & IN_BACK )      wish_fwd  -= 1.f;
+		if( g_cl.m_buttons & IN_MOVERIGHT ) wish_side += 1.f;
+		if( g_cl.m_buttons & IN_MOVELEFT )  wish_side -= 1.f;
+
+		// current travel direction.
+		velocity_angle = math::rad_to_deg( std::atan2( velocity.y, velocity.x ) );
+
+		// world-space yaw we want to move towards. with no keys held we just
+		// keep our current heading ( silent speed-keep ).
+		float want;
+		if( wish_fwd != 0.f || wish_side != 0.f )
+			want = math::NormalizedAngle( g_cl.m_cmd->m_view_angles.y + math::rad_to_deg( std::atan2( -wish_side, wish_fwd ) ) );
+		else
+			want = velocity_angle;
+
+		// signed difference between where we travel and where we want to go.
+		float diff = math::NormalizedAngle( want - velocity_angle );
+
+		// step towards the wish direction by at most the optimal strafe angle.
+		float step = std::min( std::abs( diff ), m_ideal );
+
+		if( diff > 0.f ) {
+			// turn left: aim ahead of velocity and strafe with the left key.
+			g_cl.m_cmd->m_view_angles.y = math::NormalizedAngle( velocity_angle + step );
+			g_cl.m_cmd->m_side_move = -450.f;
+		}
+		else if( diff < 0.f ) {
+			// turn right: aim ahead of velocity and strafe with the right key.
+			g_cl.m_cmd->m_view_angles.y = math::NormalizedAngle( velocity_angle - step );
+			g_cl.m_cmd->m_side_move = 450.f;
+		}
+		else {
+			// already aligned: alternate every tick to keep accelerating.
+			g_cl.m_cmd->m_view_angles.y = math::NormalizedAngle( velocity_angle + ( m_ideal * m_switch_value ) );
+			g_cl.m_cmd->m_side_move = 450.f * m_switch_value;
+		}
+
+		g_cl.m_cmd->m_forward_move = 0.f;
+		return;
+	}
+
 	if( !g_menu.main.movement.autostrafe.get( ) )
 		return;
 
@@ -436,30 +485,35 @@ void Movement::AutoPeek( ) {
 }
 
 void Movement::QuickStop( ) {
-	// convert velocity to angular momentum.
+	// only the horizontal velocity matters for stopping ground movement,
+	// using the full 3d length skews the counter direction while airborne.
+	vec3_t velocity = g_cl.m_local->m_vecVelocity( );
+	float  speed = velocity.length_2d( );
+
+	// already essentially stopped: zero the move so we don't drift / reverse.
+	if( speed <= 5.f ) {
+		g_cl.m_cmd->m_forward_move = 0.f;
+		g_cl.m_cmd->m_side_move = 0.f;
+		return;
+	}
+
+	// convert velocity to an angle and make it relative to where we look.
 	ang_t angle;
-	math::VectorAngles( g_cl.m_local->m_vecVelocity( ), angle );
-
-	// get our current speed of travel.
-	float speed = g_cl.m_local->m_vecVelocity( ).length( );
-
-	// fix direction by factoring in where we are looking.
+	math::VectorAngles( velocity, angle );
 	angle.y = g_cl.m_view_angles.y - angle.y;
 
-	// convert corrected angle back to a direction.
+	// convert corrected angle back to a local move direction.
 	vec3_t direction;
 	math::AngleVectors( angle, &direction );
 
-	vec3_t stop = direction * -speed;
+	// counter-strafe: when we are still fast, counter at full authority so the
+	// engine decelerates as hard as it can (it clamps move to max speed anyway);
+	// once we are slow, scale down to the remaining speed so we land on zero
+	// instead of accelerating back the other way.
+	float authority = ( speed > 80.f ) ? 450.f : speed;
 
-	if( g_cl.m_speed > 13.f ) {
-		g_cl.m_cmd->m_forward_move = stop.x;
-		g_cl.m_cmd->m_side_move = stop.y;
-	}
-	else {
-		g_cl.m_cmd->m_forward_move = 0.f;
-		g_cl.m_cmd->m_side_move = 0.f;
-	}
+	g_cl.m_cmd->m_forward_move = direction.x * -authority;
+	g_cl.m_cmd->m_side_move = direction.y * -authority;
 }
 
 void Movement::FakeWalk( ) {

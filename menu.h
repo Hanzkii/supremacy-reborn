@@ -843,6 +843,7 @@ public:
 	Checkbox bhop;
 	Checkbox airduck;
 	Checkbox autostrafe;
+	Checkbox wasd_strafe;
 	Keybind  cstrafe;
 	Keybind  astrafe;
 	Keybind  zstrafe;
@@ -866,6 +867,9 @@ public:
 
 		autostrafe.setup(XOR("automatic strafe"), XOR("autostrafe"));
 		RegisterElement(&autostrafe);
+
+		wasd_strafe.setup(XOR("wasd autostrafe"), XOR("wasd_strafe"));
+		RegisterElement(&wasd_strafe);
 
 		cstrafe.setup(XOR("c-strafe"), XOR("cstrafe"));
 		RegisterElement(&cstrafe);
