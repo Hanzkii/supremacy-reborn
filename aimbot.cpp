@@ -311,6 +311,7 @@ void AimPlayer::OnRoundStart(Player* player) {
 	m_stand_index = 0;
 	m_stand_index2 = 0;
 	m_body_index = 0;
+	m_anim_side = 0;
 
 	m_records.clear();
 	m_hitboxes.clear();
@@ -429,6 +430,9 @@ void Aimbot::init() {
 	// clear old targets.
 	m_targets.clear();
 
+	// avoid reallocations while collecting this tick's targets.
+	m_targets.reserve( 64 );
+
 	m_target = nullptr;
 	m_aim = vec3_t{ };
 	m_angle = ang_t{ };
@@ -494,18 +498,15 @@ void Aimbot::think() {
 		return;
 
 	// setup bones for all valid targets.
-	for (int i{ 1 }; i <= g_csgo.m_globals->m_max_clients; ++i) {
+	const int max_clients = g_csgo.m_globals->m_max_clients;
+	for (int i{ 1 }; i <= max_clients; ++i) {
 		Player* player = g_csgo.m_entlist->GetClientEntity< Player* >(i);
 
 		if (!IsValidTarget(player))
 			continue;
 
-		AimPlayer* data = &m_players[i - 1];
-		if (!data)
-			continue;
-
 		// store player as potential target this tick.
-		m_targets.emplace_back(data);
+		m_targets.emplace_back(&m_players[i - 1]);
 	}
 
 	// run knifebot.
@@ -541,6 +542,9 @@ void Aimbot::find() {
 	if (g_cl.m_weapon_id == ZEUS && !g_menu.main.aimbot.zeusbot.get())
 		return;
 
+	// cache menu state used every iteration.
+	const bool lagfix = g_menu.main.aimbot.lagfix.get();
+
 	// iterate all targets.
 	for (const auto& t : m_targets) {
 		if (t->m_records.empty())
@@ -549,7 +553,7 @@ void Aimbot::find() {
 		// this player broke lagcomp.
 		// his bones have been resetup by our lagcomp.
 		// therfore now only the front record is valid.
-		if (g_menu.main.aimbot.lagfix.get() && g_lagcomp.StartPrediction(t)) {
+		if (lagfix && g_lagcomp.StartPrediction(t)) {
 			LagRecord* front = t->m_records.front().get();
 
 			t->SetupHitboxes(front, false);

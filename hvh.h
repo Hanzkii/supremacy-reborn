@@ -51,6 +51,11 @@ public:
 	size_t m_base_angle;
 	float  m_auto_time;
 
+	// per-state fake yaw settings.
+	size_t m_fake_yaw;
+	float  m_fake_relative;
+	float  m_fake_jitter;
+
 	bool   m_step_switch;
 	int    m_random_lag;
 	float  m_next_random_update;

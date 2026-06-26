@@ -216,12 +216,33 @@ bool callbacks::IsAirDirCustom( ) {
 	return g_menu.main.antiaim.dir_air.get( ) == 4;
 }
 
-bool callbacks::IsFakeAntiAimRelative( ) {
-	return g_menu.main.antiaim.fake_yaw.get( ) == 2;
+static bool FakeYawUsesJitter( int y ) {
+	// presets that are driven by the fake jitter range slider.
+	return y == 3 || y == 4 || y == 8 || y == 9 || y == 11;
 }
 
-bool callbacks::IsFakeAntiAimJitter( ) {
-	return g_menu.main.antiaim.fake_yaw.get( ) == 3;
+bool callbacks::IsFakeStandRelative( ) {
+	return g_menu.main.antiaim.mode.get( ) == 0 && g_menu.main.antiaim.fake_yaw_stand.get( ) == 2;
+}
+
+bool callbacks::IsFakeStandJitter( ) {
+	return g_menu.main.antiaim.mode.get( ) == 0 && FakeYawUsesJitter( g_menu.main.antiaim.fake_yaw_stand.get( ) );
+}
+
+bool callbacks::IsFakeWalkRelative( ) {
+	return g_menu.main.antiaim.mode.get( ) == 1 && g_menu.main.antiaim.fake_yaw_walk.get( ) == 2;
+}
+
+bool callbacks::IsFakeWalkJitter( ) {
+	return g_menu.main.antiaim.mode.get( ) == 1 && FakeYawUsesJitter( g_menu.main.antiaim.fake_yaw_walk.get( ) );
+}
+
+bool callbacks::IsFakeAirRelative( ) {
+	return g_menu.main.antiaim.mode.get( ) == 2 && g_menu.main.antiaim.fake_yaw_air.get( ) == 2;
+}
+
+bool callbacks::IsFakeAirJitter( ) {
+	return g_menu.main.antiaim.mode.get( ) == 2 && FakeYawUsesJitter( g_menu.main.antiaim.fake_yaw_air.get( ) );
 }
 
 bool callbacks::IsConfigMM( ) {
@@ -257,305 +278,240 @@ bool callbacks::IsConfig6( ) {
 }
 
 // weaponcfgs callbacks.
-bool callbacks::DEAGLE( ) {
+// dropdown index ( minus the leading "current weapon" entry ) maps to these weapons.
+static constexpr int skin_weapon_order[] = {
+	Weapons_t::DEAGLE,
+	Weapons_t::ELITE,
+	Weapons_t::FIVESEVEN,
+	Weapons_t::GLOCK,
+	Weapons_t::AK47,
+	Weapons_t::AUG,
+	Weapons_t::AWP,
+	Weapons_t::FAMAS,
+	Weapons_t::G3SG1,
+	Weapons_t::GALIL,
+	Weapons_t::M249,
+	Weapons_t::M4A4,
+	Weapons_t::MAC10,
+	Weapons_t::P90,
+	Weapons_t::UMP45,
+	Weapons_t::XM1014,
+	Weapons_t::BIZON,
+	Weapons_t::MAG7,
+	Weapons_t::NEGEV,
+	Weapons_t::SAWEDOFF,
+	Weapons_t::TEC9,
+	Weapons_t::P2000,
+	Weapons_t::MP7,
+	Weapons_t::MP9,
+	Weapons_t::NOVA,
+	Weapons_t::P250,
+	Weapons_t::SCAR20,
+	Weapons_t::SG553,
+	Weapons_t::SSG08,
+	Weapons_t::M4A1S,
+	Weapons_t::USPS,
+	Weapons_t::CZ75A,
+	Weapons_t::REVOLVER,
+	Weapons_t::KNIFE_BAYONET,
+	Weapons_t::KNIFE_FLIP,
+	Weapons_t::KNIFE_GUT,
+	Weapons_t::KNIFE_KARAMBIT,
+	Weapons_t::KNIFE_M9_BAYONET,
+	Weapons_t::KNIFE_HUNTSMAN,
+	Weapons_t::KNIFE_FALCHION,
+	Weapons_t::KNIFE_BOWIE,
+	Weapons_t::KNIFE_BUTTERFLY,
+	Weapons_t::KNIFE_SHADOW_DAGGERS
+};
+
+// resolve whether the skin config for the given weapon should be shown,
+// either because it is manually picked in the weapon dropdown or ( index 0 )
+// because it is the weapon currently equipped in-game.
+static bool IsSkinWeaponSelected( int weapon ) {
+	size_t selection = g_menu.main.skins.weapon.get( );
+
+	if( selection != 0 ) {
+		size_t idx = selection - 1;
+		return idx < ( sizeof( skin_weapon_order ) / sizeof( skin_weapon_order[ 0 ] ) ) && skin_weapon_order[ idx ] == weapon;
+	}
+
 	if( !g_csgo.m_engine->IsInGame( ) || !g_cl.m_processing )
 		return false;
 
-	return g_cl.m_weapon_id == Weapons_t::DEAGLE;
+	return g_cl.m_weapon_id == weapon;
+}
+
+bool callbacks::DEAGLE( ) {
+	return IsSkinWeaponSelected( Weapons_t::DEAGLE );
 }
 
 bool callbacks::ELITE( ) {
-	if( !g_csgo.m_engine->IsInGame( ) || !g_cl.m_processing )
-		return false;
-
-	return g_cl.m_weapon_id == Weapons_t::ELITE;
+	return IsSkinWeaponSelected( Weapons_t::ELITE );
 }
 
 bool callbacks::FIVESEVEN( ) {
-	if( !g_csgo.m_engine->IsInGame( ) || !g_cl.m_processing )
-		return false;
-
-	return g_cl.m_weapon_id == Weapons_t::FIVESEVEN;
+	return IsSkinWeaponSelected( Weapons_t::FIVESEVEN );
 }
 
 bool callbacks::GLOCK( ) {
-	if( !g_csgo.m_engine->IsInGame( ) || !g_cl.m_processing )
-		return false;
-
-	return g_cl.m_weapon_id == Weapons_t::GLOCK;
+	return IsSkinWeaponSelected( Weapons_t::GLOCK );
 }
 
 bool callbacks::AK47( ) {
-	if( !g_csgo.m_engine->IsInGame( ) || !g_cl.m_processing )
-		return false;
-
-	return g_cl.m_weapon_id == Weapons_t::AK47;
+	return IsSkinWeaponSelected( Weapons_t::AK47 );
 }
 
 bool callbacks::AUG( ) {
-	if( !g_csgo.m_engine->IsInGame( ) || !g_cl.m_processing )
-		return false;
-
-	return g_cl.m_weapon_id == Weapons_t::AUG;
+	return IsSkinWeaponSelected( Weapons_t::AUG );
 }
 
 bool callbacks::AWP( ) {
-	if( !g_csgo.m_engine->IsInGame( ) || !g_cl.m_processing )
-		return false;
-
-	return g_cl.m_weapon_id == Weapons_t::AWP;
+	return IsSkinWeaponSelected( Weapons_t::AWP );
 }
 
 bool callbacks::FAMAS( ) {
-	if( !g_csgo.m_engine->IsInGame( ) || !g_cl.m_processing )
-		return false;
-
-	return g_cl.m_weapon_id == Weapons_t::FAMAS;
+	return IsSkinWeaponSelected( Weapons_t::FAMAS );
 }
 
 bool callbacks::G3SG1( ) {
-	if( !g_csgo.m_engine->IsInGame( ) || !g_cl.m_processing )
-		return false;
-
-	return g_cl.m_weapon_id == Weapons_t::G3SG1;
+	return IsSkinWeaponSelected( Weapons_t::G3SG1 );
 }
 
 bool callbacks::GALIL( ) {
-	if( !g_csgo.m_engine->IsInGame( ) || !g_cl.m_processing )
-		return false;
-
-	return g_cl.m_weapon_id == Weapons_t::GALIL;
+	return IsSkinWeaponSelected( Weapons_t::GALIL );
 }
 
 bool callbacks::M249( ) {
-	if( !g_csgo.m_engine->IsInGame( ) || !g_cl.m_processing )
-		return false;
-
-	return g_cl.m_weapon_id == Weapons_t::M249;
+	return IsSkinWeaponSelected( Weapons_t::M249 );
 }
 
 bool callbacks::M4A4( ) {
-	if( !g_csgo.m_engine->IsInGame( ) || !g_cl.m_processing )
-		return false;
-
-	return g_cl.m_weapon_id == Weapons_t::M4A4;
+	return IsSkinWeaponSelected( Weapons_t::M4A4 );
 }
 
 bool callbacks::MAC10( ) {
-	if( !g_csgo.m_engine->IsInGame( ) || !g_cl.m_processing )
-		return false;
-
-	return g_cl.m_weapon_id == Weapons_t::MAC10;
+	return IsSkinWeaponSelected( Weapons_t::MAC10 );
 }
 
 bool callbacks::P90( ) {
-	if( !g_csgo.m_engine->IsInGame( ) || !g_cl.m_processing )
-		return false;
-
-	return g_cl.m_weapon_id == Weapons_t::P90;
+	return IsSkinWeaponSelected( Weapons_t::P90 );
 }
 
 bool callbacks::UMP45( ) {
-	if( !g_csgo.m_engine->IsInGame( ) || !g_cl.m_processing )
-		return false;
-
-	return g_cl.m_weapon_id == Weapons_t::UMP45;
+	return IsSkinWeaponSelected( Weapons_t::UMP45 );
 }
 
 bool callbacks::XM1014( ) {
-	if( !g_csgo.m_engine->IsInGame( ) || !g_cl.m_processing )
-		return false;
-
-	return g_cl.m_weapon_id == Weapons_t::XM1014;
+	return IsSkinWeaponSelected( Weapons_t::XM1014 );
 }
 
 bool callbacks::BIZON( ) {
-	if( !g_csgo.m_engine->IsInGame( ) || !g_cl.m_processing )
-		return false;
-
-	return g_cl.m_weapon_id == Weapons_t::BIZON;
+	return IsSkinWeaponSelected( Weapons_t::BIZON );
 }
 
 bool callbacks::MAG7( ) {
-	if( !g_csgo.m_engine->IsInGame( ) || !g_cl.m_processing )
-		return false;
-
-	return g_cl.m_weapon_id == Weapons_t::MAG7;
+	return IsSkinWeaponSelected( Weapons_t::MAG7 );
 }
 
 bool callbacks::NEGEV( ) {
-	if( !g_csgo.m_engine->IsInGame( ) || !g_cl.m_processing )
-		return false;
-
-	return g_cl.m_weapon_id == Weapons_t::NEGEV;
+	return IsSkinWeaponSelected( Weapons_t::NEGEV );
 }
 
 bool callbacks::SAWEDOFF( ) {
-	if( !g_csgo.m_engine->IsInGame( ) || !g_cl.m_processing )
-		return false;
-
-	return g_cl.m_weapon_id == Weapons_t::SAWEDOFF;
+	return IsSkinWeaponSelected( Weapons_t::SAWEDOFF );
 }
 
 bool callbacks::TEC9( ) {
-	if( !g_csgo.m_engine->IsInGame( ) || !g_cl.m_processing )
-		return false;
-
-	return g_cl.m_weapon_id == Weapons_t::TEC9;
+	return IsSkinWeaponSelected( Weapons_t::TEC9 );
 }
 
 bool callbacks::P2000( ) {
-	if( !g_csgo.m_engine->IsInGame( ) || !g_cl.m_processing )
-		return false;
-
-	return g_cl.m_weapon_id == Weapons_t::P2000;
+	return IsSkinWeaponSelected( Weapons_t::P2000 );
 }
 
 bool callbacks::MP7( ) {
-	if( !g_csgo.m_engine->IsInGame( ) || !g_cl.m_processing )
-		return false;
-
-	return g_cl.m_weapon_id == Weapons_t::MP7;
+	return IsSkinWeaponSelected( Weapons_t::MP7 );
 }
 
 bool callbacks::MP9( ) {
-	if( !g_csgo.m_engine->IsInGame( ) || !g_cl.m_processing )
-		return false;
-
-	return g_cl.m_weapon_id == Weapons_t::MP9;
+	return IsSkinWeaponSelected( Weapons_t::MP9 );
 }
 
 bool callbacks::NOVA( ) {
-	if( !g_csgo.m_engine->IsInGame( ) || !g_cl.m_processing )
-		return false;
-
-	return g_cl.m_weapon_id == Weapons_t::NOVA;
+	return IsSkinWeaponSelected( Weapons_t::NOVA );
 }
 
 bool callbacks::P250( ) {
-	if( !g_csgo.m_engine->IsInGame( ) || !g_cl.m_processing )
-		return false;
-
-	return g_cl.m_weapon_id == Weapons_t::P250;
+	return IsSkinWeaponSelected( Weapons_t::P250 );
 }
 
 bool callbacks::SCAR20( ) {
-	if( !g_csgo.m_engine->IsInGame( ) || !g_cl.m_processing )
-		return false;
-
-	return g_cl.m_weapon_id == Weapons_t::SCAR20;
+	return IsSkinWeaponSelected( Weapons_t::SCAR20 );
 }
 
 bool callbacks::SG553( ) {
-	if( !g_csgo.m_engine->IsInGame( ) || !g_cl.m_processing )
-		return false;
-
-	return g_cl.m_weapon_id == Weapons_t::SG553;
+	return IsSkinWeaponSelected( Weapons_t::SG553 );
 }
 
 bool callbacks::SSG08( ) {
-	if( !g_csgo.m_engine->IsInGame( ) || !g_cl.m_processing )
-		return false;
-
-	return g_cl.m_weapon_id == Weapons_t::SSG08;
+	return IsSkinWeaponSelected( Weapons_t::SSG08 );
 }
 
 bool callbacks::M4A1S( ) {
-	if( !g_csgo.m_engine->IsInGame( ) || !g_cl.m_processing )
-		return false;
-
-	return g_cl.m_weapon_id == Weapons_t::M4A1S;
+	return IsSkinWeaponSelected( Weapons_t::M4A1S );
 }
 
 bool callbacks::USPS( ) {
-	if( !g_csgo.m_engine->IsInGame( ) || !g_cl.m_processing )
-		return false;
-
-	return g_cl.m_weapon_id == Weapons_t::USPS;
+	return IsSkinWeaponSelected( Weapons_t::USPS );
 }
 
 bool callbacks::CZ75A( ) {
-	if( !g_csgo.m_engine->IsInGame( ) || !g_cl.m_processing )
-		return false;
-
-	return g_cl.m_weapon_id == Weapons_t::CZ75A;
+	return IsSkinWeaponSelected( Weapons_t::CZ75A );
 }
 
 bool callbacks::REVOLVER( ) {
-	if( !g_csgo.m_engine->IsInGame( ) || !g_cl.m_processing )
-		return false;
-
-	return g_cl.m_weapon_id == Weapons_t::REVOLVER;
+	return IsSkinWeaponSelected( Weapons_t::REVOLVER );
 }
 
 bool callbacks::KNIFE_BAYONET( ) {
-	if( !g_csgo.m_engine->IsInGame( ) || !g_cl.m_processing )
-		return false;
-
-	return g_cl.m_weapon_id == Weapons_t::KNIFE_BAYONET;
+	return IsSkinWeaponSelected( Weapons_t::KNIFE_BAYONET );
 }
 
 bool callbacks::KNIFE_FLIP( ) {
-	if( !g_csgo.m_engine->IsInGame( ) || !g_cl.m_processing )
-		return false;
-
-	return g_cl.m_weapon_id == Weapons_t::KNIFE_FLIP;
+	return IsSkinWeaponSelected( Weapons_t::KNIFE_FLIP );
 }
 
 bool callbacks::KNIFE_GUT( ) {
-	if( !g_csgo.m_engine->IsInGame( ) || !g_cl.m_processing )
-		return false;
-
-	return g_cl.m_weapon_id == Weapons_t::KNIFE_GUT;
+	return IsSkinWeaponSelected( Weapons_t::KNIFE_GUT );
 }
 
 bool callbacks::KNIFE_KARAMBIT( ) {
-	if( !g_csgo.m_engine->IsInGame( ) || !g_cl.m_processing )
-		return false;
-
-	return g_cl.m_weapon_id == Weapons_t::KNIFE_KARAMBIT;
+	return IsSkinWeaponSelected( Weapons_t::KNIFE_KARAMBIT );
 }
 
 bool callbacks::KNIFE_M9_BAYONET( ) {
-	if( !g_csgo.m_engine->IsInGame( ) || !g_cl.m_processing )
-		return false;
-
-	return g_cl.m_weapon_id == Weapons_t::KNIFE_M9_BAYONET;
+	return IsSkinWeaponSelected( Weapons_t::KNIFE_M9_BAYONET );
 }
 
 bool callbacks::KNIFE_HUNTSMAN( ) {
-	if( !g_csgo.m_engine->IsInGame( ) || !g_cl.m_processing )
-		return false;
-
-	return g_cl.m_weapon_id == Weapons_t::KNIFE_HUNTSMAN;
+	return IsSkinWeaponSelected( Weapons_t::KNIFE_HUNTSMAN );
 }
 
 bool callbacks::KNIFE_FALCHION( ) {
-	if( !g_csgo.m_engine->IsInGame( ) || !g_cl.m_processing )
-		return false;
-
-	return g_cl.m_weapon_id == Weapons_t::KNIFE_FALCHION;
+	return IsSkinWeaponSelected( Weapons_t::KNIFE_FALCHION );
 }
 
 bool callbacks::KNIFE_BOWIE( ) {
-	if( !g_csgo.m_engine->IsInGame( ) || !g_cl.m_processing )
-		return false;
-
-	return g_cl.m_weapon_id == Weapons_t::KNIFE_BOWIE;
+	return IsSkinWeaponSelected( Weapons_t::KNIFE_BOWIE );
 }
 
 bool callbacks::KNIFE_BUTTERFLY( ) {
-	if( !g_csgo.m_engine->IsInGame( ) || !g_cl.m_processing )
-		return false;
-
-	return g_cl.m_weapon_id == Weapons_t::KNIFE_BUTTERFLY;
+	return IsSkinWeaponSelected( Weapons_t::KNIFE_BUTTERFLY );
 }
 
 bool callbacks::KNIFE_SHADOW_DAGGERS( ) {
-	if( !g_csgo.m_engine->IsInGame( ) || !g_cl.m_processing )
-		return false;
-
-	return g_cl.m_weapon_id == Weapons_t::KNIFE_SHADOW_DAGGERS;
+	return IsSkinWeaponSelected( Weapons_t::KNIFE_SHADOW_DAGGERS );
 }
 
 bool callbacks::AUTO_STOP( ) {

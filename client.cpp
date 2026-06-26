@@ -351,7 +351,7 @@ void Client::SetAngles() {
 }
 
 void Client::SetAngles2(ang_t angle) {
-	if (!g_cl.m_local || !g_cl.m_processing || !g_menu.main.antiaim.fake_yaw.get())
+	if (!g_cl.m_local || !g_cl.m_processing || !g_hvh.m_fake_yaw)
 		return;
 
 	// set the nointerp flag.

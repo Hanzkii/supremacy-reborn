@@ -2,6 +2,65 @@
 
 Resolver g_resolver{};;
 
+namespace {
+	// maximum yaw a player can desync their lower body by.
+	constexpr float MAX_DESYNC_DELTA = 58.f;
+
+	// re-animates the player with the networked layers using a hypothetical eye yaw
+	// and returns the resulting movement-move layer playback rate.
+	// this mirrors the proven animation pass in AimPlayer::UpdateAnimations and fully
+	// backs up / restores every value it touches so it is non-destructive.
+	float EvalMoveLayerRate( LagRecord* record, CCSGOPlayerAnimState* state, float yaw ) {
+		Player* player = record->m_player;
+
+		// backup everything we are about to clobber.
+		CCSGOPlayerAnimState state_backup;
+		std::memcpy( &state_backup, state, sizeof( CCSGOPlayerAnimState ) );
+
+		C_AnimationLayer layer_backup[ 13 ];
+		player->GetAnimLayers( layer_backup );
+
+		vec3_t vel_backup    = player->m_vecVelocity( );
+		vec3_t absvel_backup = player->m_vecAbsVelocity( );
+		ang_t  ang_backup    = player->m_angEyeAngles( );
+		int    eflags_backup = player->m_iEFlags( );
+
+		// feed the networked layers and the animation velocity.
+		player->SetAnimLayers( record->m_layers );
+		player->m_vecVelocity( ) = player->m_vecAbsVelocity( ) = record->m_anim_velocity;
+
+		// EFL_DIRTY_ABSVELOCITY, skip CalcAbsoluteVelocity.
+		player->m_iEFlags( ) &= ~0x1000;
+
+		ang_t ang{ record->m_eye_angles.x, yaw, 0.f };
+		math::NormalizeAngle( ang.y );
+		player->m_angEyeAngles( ) = ang;
+
+		// bypass already-animated checks for this frame.
+		if( state->m_frame == g_csgo.m_globals->m_frame )
+			state->m_frame -= 1;
+
+		player->m_bClientSideAnimation( ) = true;
+		player->UpdateClientSideAnimation( );
+		player->m_bClientSideAnimation( ) = false;
+
+		// read the resulting movement-move layer playback rate.
+		C_AnimationLayer cur[ 13 ];
+		player->GetAnimLayers( cur );
+		float rate = cur[ ANIMATION_LAYER_MOVEMENT_MOVE ].m_playback_rate;
+
+		// restore everything.
+		std::memcpy( state, &state_backup, sizeof( CCSGOPlayerAnimState ) );
+		player->SetAnimLayers( layer_backup );
+		player->m_vecVelocity( )    = vel_backup;
+		player->m_vecAbsVelocity( ) = absvel_backup;
+		player->m_angEyeAngles( )   = ang_backup;
+		player->m_iEFlags( )        = eflags_backup;
+
+		return rate;
+	}
+}
+
 LagRecord* Resolver::FindIdealRecord( AimPlayer* data ) {
     LagRecord *first_valid, *current;
 
@@ -153,6 +212,67 @@ void Resolver::SetMode( LagRecord* record ) {
 		record->m_mode = Modes::RESOLVE_AIR;
 }
 
+void Resolver::ResolveAnimationLayers( AimPlayer* data, LagRecord* record ) {
+	CCSGOPlayerAnimState* state = record->m_player->m_PlayerAnimState( );
+	if( !state )
+		return;
+
+	// no side detected yet.
+	record->m_desync_side = 0;
+
+	float eye_yaw = record->m_eye_angles.y;
+
+	// player is standing, use the difference between the eye yaw and the goal feet yaw.
+	if( record->m_velocity.length_2d( ) <= 0.1f ) {
+		float difference = math::NormalizedAngle( eye_yaw - state->m_goal_feet_yaw );
+		record->m_desync_side = ( difference <= 0.f ) ? 1 : -1;
+		data->m_anim_side = record->m_desync_side;
+		return;
+	}
+
+	// player is moving, compare the movement-move layer playback rate against the
+	// networked, processed, and yaw-lerped variants to figure out the desync direction.
+
+	// need a previous record to compare against.
+	if( data->m_records.size( ) < 2 )
+		return;
+
+	LagRecord* previous = data->m_records[ 1 ].get( );
+	if( !previous || previous->dormant( ) )
+		return;
+
+	// only proceed when we are not leaning and the movement weight matches the previous record.
+	int lean_weight     = ( int )( record->m_layers[ ANIMATION_LAYER_LEAN ].m_weight * 1000.f );
+	int move_weight     = ( int )( record->m_layers[ ANIMATION_LAYER_MOVEMENT_MOVE ].m_weight * 1000.f );
+	int prev_move_weight = ( int )( previous->m_layers[ ANIMATION_LAYER_MOVEMENT_MOVE ].m_weight * 1000.f );
+
+	if( lean_weight != 0 || move_weight != prev_move_weight )
+		return;
+
+	// networked playback rate as stored from the server update.
+	float networked = record->m_layers[ ANIMATION_LAYER_MOVEMENT_MOVE ].m_playback_rate;
+
+	// re-animate with the real, positive and negative lerped yaw to obtain the playback rates.
+	float processed = EvalMoveLayerRate( record, state, eye_yaw );
+	float positive  = EvalMoveLayerRate( record, state, eye_yaw + MAX_DESYNC_DELTA );
+	float negative  = EvalMoveLayerRate( record, state, eye_yaw - MAX_DESYNC_DELTA );
+
+	float processed_speed = std::abs( networked - processed );
+	float positive_speed  = std::abs( networked - positive );
+	float negative_speed  = std::abs( networked - negative );
+
+	if( processed_speed < positive_speed || negative_speed <= positive_speed || ( int )( positive_speed * 1000.f ) ) {
+		if( processed_speed >= negative_speed && positive_speed > negative_speed && !( int )( negative_speed * 1000.f ) )
+			record->m_desync_side = 1;
+	}
+	else {
+		record->m_desync_side = -1;
+	}
+
+	if( record->m_desync_side != 0 )
+		data->m_anim_side = record->m_desync_side;
+}
+
 void Resolver::ResolveAngles( Player* player, LagRecord* record ) {
 	AimPlayer* data = &g_aimbot.m_players[ player->index( ) - 1 ];
 
@@ -161,6 +281,10 @@ void Resolver::ResolveAngles( Player* player, LagRecord* record ) {
 
 	// next up mark this record with a resolver mode that will be used.
 	SetMode( record );
+
+	// run the animation-layer desync detector when enabled.
+	if( g_menu.main.aimbot.anim_resolver.get( ) )
+		ResolveAnimationLayers( data, record );
 
 	// if we are in nospread mode, force all players pitches to down.
 	// TODO; we should check thei actual pitch and up too, since those are the other 2 possible angles.
@@ -186,6 +310,14 @@ void Resolver::ResolveWalk( AimPlayer* data, LagRecord* record ) {
 	// apply lby to eyeangles.
 	record->m_eye_angles.y = record->m_body;
 
+	// override with the animation-layer resolved side when we found one.
+	if( g_menu.main.aimbot.anim_resolver.get( ) && record->m_desync_side != 0 ) {
+		CCSGOPlayerAnimState* state = data->m_player->m_PlayerAnimState( );
+
+		if( state )
+			record->m_eye_angles.y = math::NormalizedAngle( state->m_goal_feet_yaw - record->m_desync_side * MAX_DESYNC_DELTA );
+	}
+
 	// delay body update.
 	data->m_body_update = record->m_anim_time + 0.22f;
 
@@ -204,6 +336,17 @@ void Resolver::ResolveStand( AimPlayer* data, LagRecord* record ) {
 	if( g_menu.main.config.mode.get( ) == 1 ) {
 		StandNS( data, record );
 		return;
+	}
+
+	// if the animation-layer resolver found a side, trust it.
+	if( g_menu.main.aimbot.anim_resolver.get( ) && record->m_desync_side != 0 ) {
+		CCSGOPlayerAnimState* state = data->m_player->m_PlayerAnimState( );
+
+		if( state ) {
+			record->m_eye_angles.y = math::NormalizedAngle( state->m_goal_feet_yaw - record->m_desync_side * MAX_DESYNC_DELTA );
+			record->m_mode         = Modes::RESOLVE_STAND1;
+			return;
+		}
 	}
 
 	// get predicted away angle for the player.

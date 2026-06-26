@@ -27,6 +27,8 @@ public:
 	void MatchShot( AimPlayer* data, LagRecord* record );
 	void SetMode( LagRecord* record );
 
+	void ResolveAnimationLayers( AimPlayer* data, LagRecord* record );
+
 	void ResolveAngles( Player* player, LagRecord* record );
 	void ResolveWalk( AimPlayer* data, LagRecord* record );
 	void ResolveStand( AimPlayer* data, LagRecord* record );

@@ -47,8 +47,12 @@ namespace callbacks {
 	bool IsAirYawRandom( );
 	bool IsAirDirAuto( );
 	bool IsAirDirCustom( );
-	bool IsFakeAntiAimRelative( );
-	bool IsFakeAntiAimJitter( );
+	bool IsFakeStandRelative( );
+	bool IsFakeStandJitter( );
+	bool IsFakeWalkRelative( );
+	bool IsFakeWalkJitter( );
+	bool IsFakeAirRelative( );
+	bool IsFakeAirJitter( );
 	
 	bool IsConfigMM( );
 	bool IsConfigNS( );

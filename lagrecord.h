@@ -87,6 +87,7 @@ public:
 	bool   m_shot;
 	float  m_away;
 	float  m_anim_time;
+	int    m_desync_side; // -1 left, +1 right, 0 unknown (anim-layer resolver)
 
 	// other stuff.
 	float  m_interp_time;
@@ -166,6 +167,9 @@ public:
 
 		// compute animtime.
 		m_anim_time = m_old_sim_time + g_csgo.m_globals->m_interval;
+
+		// reset anim-layer resolver state.
+		m_desync_side = 0;
 	}
 
 	// function: restores 'predicted' variables to their original.
