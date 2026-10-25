@@ -1,6 +1,6 @@
 #include "includes.h"
 
-Aimbot g_aimbot{ };;
+Aimbot g_aimbot{ };
 
 void AimPlayer::UpdateAnimations(LagRecord* record) {
 	CCSGOPlayerAnimState* state = m_player->m_PlayerAnimState();

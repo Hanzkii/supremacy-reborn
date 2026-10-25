@@ -1,6 +1,6 @@
 #include "includes.h"
 
-Skins g_skins{};;
+Skins g_skins{};
 
 void Skins::load( ) {
 	// update model indexes on mapload.

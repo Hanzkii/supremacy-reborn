@@ -8,7 +8,7 @@ int __stdcall DllMain( HMODULE self, ulong_t reason, void *reserved ) {
         if( !thread )
             return 0;
 
-        // CloseHandle( thread );
+        CloseHandle( thread );
 #else
 		Client::init( nullptr );
 #endif

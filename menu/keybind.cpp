@@ -26,7 +26,7 @@ const std::string keynames[] = {
 	XOR( "[228]" ), XOR( "[229]" ), XOR( "[230]" ), XOR( "[231]" ), XOR( "[232]" ), XOR( "[233]" ), XOR( "right win" ), XOR( "[235]" ), XOR( "[236]" ), XOR( "[237]" ),
 	XOR( "[238]" ), XOR( "[239]" ), XOR( "[240]" ), XOR( "left win" ), XOR( "[242]" ), XOR( "[243]" ), XOR( "[244]" ), XOR( "[245]" ), XOR( "[246]" ), XOR( "[247]" ),
 	XOR( "[248]" ), XOR( "application" ), XOR( "[250]" ), XOR( "[251]" ), XOR( "[252]" ), XOR( "[253]" )
-};;
+};
 
 void Keybind::draw( ) {
 	Rect  area{ m_parent->GetElementsRect( ) };

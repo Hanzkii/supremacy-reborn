@@ -1,6 +1,6 @@
 #include "includes.h"
 
-Bones g_bones{};;
+Bones g_bones{};
 
 bool Bones::setup( Player* player, BoneArray* out, LagRecord* record ) {
 	// if the record isnt setup yet.

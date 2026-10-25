@@ -1,6 +1,6 @@
 #include "includes.h"
 
-Chams g_chams{ };;
+Chams g_chams{ };
 
 Chams::model_type_t Chams::GetModelType(const ModelRenderInfo_t& info) {
 	// model name.

@@ -1,6 +1,6 @@
 #include "includes.h"
 
-Resolver g_resolver{};;
+Resolver g_resolver{};
 
 LagRecord* Resolver::FindIdealRecord( AimPlayer* data ) {
     LagRecord *first_valid, *current;

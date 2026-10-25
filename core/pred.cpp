@@ -1,7 +1,7 @@
 #include "includes.h"
 #include "pred.h"
 
-InputPrediction g_inputpred{};;
+InputPrediction g_inputpred{};
 
 void InputPrediction::update( ) {
 	bool        valid{ g_csgo.m_cl->m_delta_tick > 0 };

@@ -1,6 +1,6 @@
 #include "includes.h"
 
-Grenades g_grenades{};;
+Grenades g_grenades{};
 
 void Grenades::reset( ) {
 	m_start    = vec3_t{};

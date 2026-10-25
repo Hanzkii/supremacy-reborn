@@ -1,7 +1,7 @@
 #include "includes.h"
 
-Hooks                g_hooks{ };;
-CustomEntityListener g_custom_entity_listener{ };;
+Hooks                g_hooks{ };
+CustomEntityListener g_custom_entity_listener{ };
 
 void Pitch_proxy( CRecvProxyData *data, Address ptr, Address out ) {
 	// normalize this fucker.

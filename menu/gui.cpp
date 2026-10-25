@@ -1,7 +1,7 @@
 #include "includes.h"
 
-GUI	  g_gui{};;
-Input g_input{};;
+GUI	  g_gui{};
+Input g_input{};
 
 void GUI::think( ) {
 	m_open = false;

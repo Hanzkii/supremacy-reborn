@@ -92,9 +92,10 @@ public:
 	template< typename t = Address >
 	__forceinline t add( size_t index, void* function_ptr ) {
 		size_t vmt_index{ m_rtti ? index + 1 : index };
+		const size_t total_size = m_rtti ? m_size + 1 : m_size;
 
 		// sanity check some stuff first.
-		if( !m_old_vmt || !m_new_vmt || vmt_index > m_size )
+		if( !m_old_vmt || !m_new_vmt || vmt_index >= total_size || index >= m_size )
             return t{};
 
 		// redirect.
@@ -105,9 +106,10 @@ public:
 
 	__forceinline bool remove( size_t index ) {
 		size_t vmt_index{ m_rtti ? index + 1 : index };
+		const size_t total_size = m_rtti ? m_size + 1 : m_size;
 
 		// sanity check some stuff first.
-		if( !m_old_vmt || !m_new_vmt || vmt_index > m_size )
+		if( !m_old_vmt || !m_new_vmt || vmt_index >= total_size || index >= m_size )
 			return false;
 
 		// redirect.
@@ -118,6 +120,9 @@ public:
 
 	template< typename t = Address >
 	__forceinline t GetOldMethod( size_t index ) {
+		if( !m_old_vmt || index >= m_size )
+			return t{};
+
 		return m_old_vmt[ index ].as< t >( );
 	}
 };

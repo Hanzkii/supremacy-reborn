@@ -1,6 +1,6 @@
 #include "includes.h"
 
-Visuals g_visuals{ };;
+Visuals g_visuals{ };
 
 void Visuals::ModulateWorld( ) {
 	std::vector< IMaterial* > world, props;

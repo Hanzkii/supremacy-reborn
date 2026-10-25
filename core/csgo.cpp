@@ -1,12 +1,12 @@
 #include "includes.h"
 
-CSGO	   g_csgo{};;
-IMemAlloc* g_pMemAlloc = nullptr;;
-WinAPI	   g_winapi{};;
-Netvars	   g_netvars{};;
-EntOffsets g_entoffsets{};;
-Menu       g_menu{};;
-Notify     g_notify{};;
+CSGO	   g_csgo{};
+IMemAlloc* g_pMemAlloc = nullptr;
+WinAPI	   g_winapi{};
+Netvars	   g_netvars{};
+EntOffsets g_entoffsets{};
+Menu       g_menu{};
+Notify     g_notify{};
 
 bool CSGO::init( ) {
 	m_done = false;

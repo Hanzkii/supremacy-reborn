@@ -1,13 +1,13 @@
 #include "includes.h"
 
 namespace render {
-	Font menu;;
-	Font menu_shade;;
-	Font esp;;
-	Font esp_small;;
-	Font hud;;
-	Font cs;;
-	Font indicator;;
+	Font menu;
+	Font menu_shade;
+	Font esp;
+	Font esp_small;
+	Font hud;
+	Font cs;
+	Font indicator;
 }
 
 void render::init( ) {

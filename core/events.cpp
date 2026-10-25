@@ -1,6 +1,6 @@
 #include "includes.h"
 
-Listener g_listener{};;
+Listener g_listener{};
 
 void events::round_start( IGameEvent* evt ) { 
 	// new round has started. no longer round end.

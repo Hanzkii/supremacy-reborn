@@ -1,6 +1,6 @@
 #include "includes.h"
 
-NetData g_netdata{};;
+NetData g_netdata{};
 
 void NetData::store( ) {
     int          tickbase;

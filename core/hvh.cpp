@@ -1,6 +1,6 @@
 #include "includes.h"
 
-HVH g_hvh{ };;
+HVH g_hvh{ };
 
 void HVH::IdealPitch( ) {
 	CCSGOPlayerAnimState *state = g_cl.m_local->m_PlayerAnimState( );

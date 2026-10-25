@@ -21,10 +21,11 @@ namespace pattern {
 				pattern.push_back( { 0, true } );
 
 			// valid hex digits.
-			else if( std::isxdigit( w[ 0 ] ) && std::isxdigit( w[ 1 ] ) )
+			else if( w.length( ) >= 2 && std::isxdigit( w[ 0 ] ) && std::isxdigit( w[ 1 ] ) )
 				pattern.push_back( { ( uint8_t )std::strtoul( w.data( ), 0, 16 ), false } );
 		}
 
+		if( pattern.empty( ) ) return{};
 		scan_start = start.as< uint8_t* >( );
 		scan_end   = scan_start + len;
 
@@ -60,10 +61,10 @@ namespace pattern {
 			out.push_back( result );
 
 			// set new len.
-			len = ( start + len ) - ( result + 1 );
+			uintptr_t next_start = result + 1; uintptr_t end = start + len; if( next_start >= end ) break;
+			len = end - next_start;
 
-			// new start point.
-			start = result + 1;
+			start = next_start;
 		}
 
 		return out;

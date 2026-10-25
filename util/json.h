@@ -12680,7 +12680,7 @@ basic_json_parser_74:
 
 					case patch_operations::copy:
 					{
-						const std::string from_path = get_value( "copy", "from", true );;
+						const std::string from_path = get_value( "copy", "from", true );
 						const json_pointer from_ptr( from_path );
 
 						// the "from" location must exist - use at()

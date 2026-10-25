@@ -1,6 +1,6 @@
 #include "includes.h"
 
-Movement g_movement{ };;
+Movement g_movement{ };
 
 void Movement::JumpRelated( ) {
 	if( g_cl.m_local->m_MoveType( ) == MOVETYPE_NOCLIP )

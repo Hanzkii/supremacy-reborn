@@ -1,8 +1,8 @@
 #include "includes.h"
 
 // static variables.
-int Colorpicker::texture = 0;;
-std::unique_ptr< Color[] > Colorpicker::gradient = nullptr;;
+int Colorpicker::texture = 0;
+std::unique_ptr< Color[] > Colorpicker::gradient = nullptr;
 
 void Colorpicker::init( ) {
 	const int w{ COLORPICKER_PICKER_SIZE };
