@@ -199,6 +199,7 @@
     <ClInclude Include="sdk\studiorender.h" />
     <ClInclude Include="sdk\surface.h" />
     <ClInclude Include="util\syscall.h" />
+    <ClInclude Include="util\threading.h" />
     <ClInclude Include="menu\tab.h" />
     <ClInclude Include="util\tinyformat.h" />
     <ClInclude Include="sdk\trace.h" />
