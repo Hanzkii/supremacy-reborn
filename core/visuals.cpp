@@ -1349,7 +1349,6 @@ void Visuals::DrawHitboxMatrix( LagRecord* record, Color col, float time ) {
 void Visuals::DrawBeams( ) {
 	size_t     impact_count;
 	float      curtime, dist;
-	bool       is_final_impact;
 	vec3_t     va_fwd, start, dir, end;
 	BeamInfo_t beam_info;
 	Beam_t* beam;
@@ -1391,22 +1390,6 @@ void Visuals::DrawBeams( ) {
 			if( impact->m_ignore )
 				continue;
 
-			// is this the final impact?
-			// last impact in the vector, it's the final impact.
-			if( i == ( impact_count - 1 ) )
-				is_final_impact = true;
-
-			// the current impact's tickbase is different than the next, it's the final impact.
-			else if( ( i + 1 ) < impact_count && impact->m_tickbase != vis_impacts->operator[ ]( i + 1 ).m_tickbase )
-				is_final_impact = true;
-
-			else
-				is_final_impact = false;
-
-			// is this the final impact?
-			// is_final_impact = ( ( i == ( impact_count - 1 ) ) || ( impact->m_tickbase != vis_impacts->at( i + 1 ).m_tickbase ) );
-
-			if( is_final_impact ) {
 				// calculate start and end position for beam.
 				start = impact->m_shoot_pos;
 
@@ -1455,7 +1438,6 @@ void Visuals::DrawBeams( ) {
 					// we only want to render a beam for this impact once.
 					impact->m_ignore = true;
 				}
-			}
 		}
 	}
 }

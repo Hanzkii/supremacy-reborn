@@ -30,12 +30,17 @@ public:
 	//	g_csgo.m_game_events->RemoveListener( this );
 	//}
 
-	void FireGameEvent( IGameEvent* evt ) override {
-		const std::string name = evt->GetName( );
+		void FireGameEvent( IGameEvent* evt ) override {
+		if( !evt )
+			return;
 
-		if( m_events.count( name ) != 0 ) {
-			const auto& events = m_events[ name ];
-			for( const auto& e : events )
+		const char* event_name = evt->GetName( );
+		if( !event_name )
+			return;
+
+		auto it = m_events.find( event_name );
+		if( it != m_events.end( ) ) {
+			for( const auto& e : it->second )
 				e( evt );
 		}
 	}
