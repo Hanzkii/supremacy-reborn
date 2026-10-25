@@ -58,7 +58,6 @@ using ulong_t = unsigned long;
 #include "nt.h"
 #include "x86.h"
 #include "syscall.h"
-#include "threading.h"
 
 // hack includes.
 #include "interfaces.h"

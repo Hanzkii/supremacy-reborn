@@ -282,9 +282,6 @@
     <ClInclude Include="util\base64.h">
       <Filter>Header Files\util\contrib</Filter>
     </ClInclude>
-    <ClInclude Include="util\threading.h">
-      <Filter>Header Files\util</Filter>
-    </ClInclude>
     <ClInclude Include="util\syscall.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
