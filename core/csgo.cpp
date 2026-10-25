@@ -1,6 +1,7 @@
 #include "includes.h"
 
 CSGO	   g_csgo{};;
+IMemAlloc* g_pMemAlloc = nullptr;;
 WinAPI	   g_winapi{};;
 Netvars	   g_netvars{};;
 EntOffsets g_entoffsets{};;
@@ -122,6 +123,7 @@ bool CSGO::init( ) {
 	m_gamerules          = pattern::find( m_client_dll, XOR( "8B 0D ? ? ? ? E8 ? ? ? ? 84 C0 75 6B" ) ).add( 0x2 ).get< C_CSGameRules* >( );
 	m_beams              = pattern::find( m_client_dll, XOR( "8D 04 24 50 A1 ? ? ? ? B9" ) ).add( 0x5 ).get< IViewRenderBeams* >( );
 	m_mem_alloc          = PE::GetExport( m_tier0_dll, HASH( "g_pMemAlloc" ) ).get< IMemAlloc* >( );
+	g_pMemAlloc          = m_mem_alloc;
 	GetGlowObjectManager = pattern::find( m_client_dll, XOR( "A1 ? ? ? ? A8 01 75 4B" ) ).as< GetGlowObjectManager_t >( );
 	m_glow               = GetGlowObjectManager( );
 	//m_hookable_cl        = reinterpret_cast< void * >( *reinterpret_cast< uintptr_t ** >( reinterpret_cast< uintptr_t >( m_cl ) + 0x8 ) );

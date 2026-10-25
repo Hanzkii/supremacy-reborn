@@ -14,3 +14,4 @@ public:
 		return util::get_method< void( __thiscall* )( void*, void* ) >( this, 5 )( this, region );
 	}
 };
+extern IMemAlloc* g_pMemAlloc;

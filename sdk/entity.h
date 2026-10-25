@@ -542,7 +542,7 @@ public:
 		return get< int >(g_entoffsets.m_iHealth);
 	}
 
-	__forceinline vec3_t& GetBonePosition(int i)
+	__forceinline vec3_t GetBonePosition(int i)
 	{
 		matrix3x4a_t boneMatrix[128];
 		if (this->SetupBones(boneMatrix, 128, 0x00000100, GetTickCount64()))

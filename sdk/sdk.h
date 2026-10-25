@@ -18,7 +18,7 @@ struct BoxTraceInfo_t;
 struct CBaseTrace;
 
 #include "game.h"
-#include "math.h"
+#include "mathlib.h"
 #include "vector2.h"
 #include "vector3.h"
 #include "angle.h"

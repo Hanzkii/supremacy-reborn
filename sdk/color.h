@@ -16,7 +16,7 @@ private:
 
 public:
 	// ctors.
-	__forceinline Color( ) : m_r{ 0 }, m_g{ 0 }, m_b{ 0 }, m_a{ 0 }, m_rgba{} {}
+	__forceinline Color( ) : m_rgba{ 0 } {}
 	__forceinline Color( int r, int g, int b, int a = 255 ) : m_r{ ( uint8_t )r }, m_g{ ( uint8_t )g }, m_b{ ( uint8_t )b }, m_a{ ( uint8_t )a } {}
 	__forceinline Color( uint32_t rgba ) : m_rgba{ rgba } {}
 

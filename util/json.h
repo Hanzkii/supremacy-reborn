@@ -1798,7 +1798,7 @@ namespace nlohmann {
 					alloc.deallocate( object, 1 );
 				};
 				std::unique_ptr<T, decltype( deleter )> object( alloc.allocate( 1 ), deleter );
-				alloc.construct( object.get( ), std::forward<Args>( args )... );
+				std::allocator_traits<decltype(alloc)>::construct( alloc, object.get( ), std::forward<Args>( args )... );
 				assert( object != nullptr );
 				return object.release( );
 			}
@@ -2684,7 +2684,7 @@ namespace nlohmann {
 				case value_t::object:
 				{
 					AllocatorType<object_t> alloc;
-					alloc.destroy( m_value.object );
+					std::allocator_traits<decltype(alloc)>::destroy( alloc, m_value.object );
 					alloc.deallocate( m_value.object, 1 );
 					break;
 				}
@@ -2692,7 +2692,7 @@ namespace nlohmann {
 				case value_t::array:
 				{
 					AllocatorType<array_t> alloc;
-					alloc.destroy( m_value.array );
+					std::allocator_traits<decltype(alloc)>::destroy( alloc, m_value.array );
 					alloc.deallocate( m_value.array, 1 );
 					break;
 				}
@@ -2700,7 +2700,7 @@ namespace nlohmann {
 				case value_t::string:
 				{
 					AllocatorType<string_t> alloc;
-					alloc.destroy( m_value.string );
+					std::allocator_traits<decltype(alloc)>::destroy( alloc, m_value.string );
 					alloc.deallocate( m_value.string, 1 );
 					break;
 				}
@@ -4352,7 +4352,7 @@ namespace nlohmann {
 
 					if( is_string( ) ) {
 						AllocatorType<string_t> alloc;
-						alloc.destroy( m_value.string );
+						std::allocator_traits<decltype(alloc)>::destroy( alloc, m_value.string );
 						alloc.deallocate( m_value.string, 1 );
 						m_value.string = nullptr;
 					}
@@ -4454,7 +4454,7 @@ namespace nlohmann {
 
 					if( is_string( ) ) {
 						AllocatorType<string_t> alloc;
-						alloc.destroy( m_value.string );
+						std::allocator_traits<decltype(alloc)>::destroy( alloc, m_value.string );
 						alloc.deallocate( m_value.string, 1 );
 						m_value.string = nullptr;
 					}
@@ -8512,16 +8512,16 @@ namespace nlohmann {
 			boolean         | `false`                           | false            | 0xc2
 			number_integer  | -9223372036854775808..-2147483649 | int64            | 0xd3
 			number_integer  | -2147483648..-32769               | int32            | 0xd2
-			number_integer  | -32768..-129                      | int16            | 0xd1
+			number_integer  | -32768..-129                      | int16            |ï¿½0xd1
 			number_integer  | -128..-33                         | int8             | 0xd0
 			number_integer  | -32..-1                           | negative fixint  | 0xe0..0xff
 			number_integer  | 0..127                            | positive fixint  | 0x00..0x7f
-			number_integer  | 128..255                          | uint 8           | 0xcc
+			number_integer  | 128..255                          | uint 8           |ï¿½0xcc
 			number_integer  | 256..65535                        | uint 16          | 0xcd
 			number_integer  | 65536..4294967295                 | uint 32          | 0xce
 			number_integer  | 4294967296..18446744073709551615  | uint 64          | 0xcf
 			number_unsigned | 0..127                            | positive fixint  | 0x00..0x7f
-			number_unsigned | 128..255                          | uint 8           | 0xcc
+			number_unsigned | 128..255                          | uint 8           |ï¿½0xcc
 			number_unsigned | 256..65535                        | uint 16          | 0xcd
 			number_unsigned | 65536..4294967295                 | uint 32          | 0xce
 			number_unsigned | 4294967296..18446744073709551615  | uint 64          | 0xcf
@@ -8776,7 +8776,7 @@ namespace nlohmann {
 			map                    | object          | 0xbb
 			map                    | object          | 0xbf
 			False                  | `false`         | 0xf4
-			True                   | `true`          | 0xf5
+			True                   |ï¿½`true`          | 0xf5
 			Nill                   | `null`          | 0xf6
 			Half-Precision Float   | number_float    | 0xf9
 			Single-Precision Float | number_float    | 0xfa

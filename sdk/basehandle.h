@@ -81,7 +81,7 @@ public:
 		return *this;
 	}
 
-	__forceinline void* CBaseHandle::Get( ) const {
+	__forceinline void* Get( ) const {
 		return nullptr;
 	}
 

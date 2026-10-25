@@ -9,7 +9,7 @@
 #define GET_XOR_KEYUI16 ( ( CONST_HASH( __FILE__ __TIMESTAMP__ ) + __LINE__ ) % UINT16_MAX )
 #define GET_XOR_KEYUI32 ( ( CONST_HASH( __FILE__ __TIMESTAMP__ ) + __LINE__ ) % UINT32_MAX )
 
-namespace xor{
+namespace xorstr {
 	// actual xor implementation.
 	template< class t, const size_t len, const t key >
 	class Gen {
@@ -48,7 +48,7 @@ namespace xor{
 
 template< class t, const size_t len >
 constexpr __forceinline auto XorStr(const t(&s)[len]) {
-	return xor ::Gen< t, len, GET_XOR_KEYUI8 >(s, std::make_index_sequence< len >()).data();
+	return xorstr::Gen< t, len, GET_XOR_KEYUI8 >(s, std::make_index_sequence< len >()).data();
 }
 
 #ifdef _DEBUG

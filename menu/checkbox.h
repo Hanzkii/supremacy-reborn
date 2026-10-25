@@ -13,14 +13,14 @@ public:
 		m_show      = true;
 	}
 
-	__forceinline void setup( const std::string &label, const std::string &file_id, bool use_label = true, bool default = false ) {
+	__forceinline void setup( const std::string &label, const std::string &file_id, bool use_label = true, bool default_val = false ) {
 		m_file_id   = file_id;
 		m_use_label = use_label;
 
 		if( m_use_label )
 			m_label = label;
 
-		m_checked = default;
+		m_checked = default_val;
 	}
 
 	__forceinline void set( bool checked ) {

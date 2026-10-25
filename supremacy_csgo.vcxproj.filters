@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Source Files">
@@ -36,438 +36,438 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="aimbot.h">
+    <ClInclude Include="core\aimbot.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="bonesetup.h">
+    <ClInclude Include="core\bonesetup.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="csgo.h">
+    <ClInclude Include="core\csgo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="hooks.h">
+    <ClInclude Include="hooks\hooks.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="hvh.h">
+    <ClInclude Include="core\hvh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="includes.h">
+    <ClInclude Include="core\includes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="lagcomp.h">
+    <ClInclude Include="core\lagcomp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="lagrecord.h">
+    <ClInclude Include="core\lagrecord.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="math.h">
+    <ClInclude Include="core\mathlib.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="movement.h">
+    <ClInclude Include="core\movement.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="penetration.h">
+    <ClInclude Include="core\penetration.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="pred.h">
+    <ClInclude Include="core\pred.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="render.h">
+    <ClInclude Include="core\render.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="visuals.h">
+    <ClInclude Include="core\visuals.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="address.h">
+    <ClInclude Include="util\address.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="angle.h">
+    <ClInclude Include="sdk\angle.h">
       <Filter>Header Files\sdk</Filter>
     </ClInclude>
-    <ClInclude Include="basehandle.h">
+    <ClInclude Include="sdk\basehandle.h">
       <Filter>Header Files\sdk</Filter>
     </ClInclude>
-    <ClInclude Include="callbacks.h">
+    <ClInclude Include="menu\callbacks.h">
       <Filter>Header Files\menu</Filter>
     </ClInclude>
-    <ClInclude Include="checkbox.h">
+    <ClInclude Include="menu\checkbox.h">
       <Filter>Header Files\menu</Filter>
     </ClInclude>
-    <ClInclude Include="clientclass.h">
+    <ClInclude Include="sdk\clientclass.h">
       <Filter>Header Files\sdk</Filter>
     </ClInclude>
-    <ClInclude Include="clientdll.h">
+    <ClInclude Include="sdk\clientdll.h">
       <Filter>Header Files\sdk</Filter>
     </ClInclude>
-    <ClInclude Include="clientmode.h">
+    <ClInclude Include="sdk\clientmode.h">
       <Filter>Header Files\sdk</Filter>
     </ClInclude>
-    <ClInclude Include="color.h">
+    <ClInclude Include="sdk\color.h">
       <Filter>Header Files\sdk</Filter>
     </ClInclude>
-    <ClInclude Include="colorpicker.h">
+    <ClInclude Include="menu\colorpicker.h">
       <Filter>Header Files\menu</Filter>
     </ClInclude>
-    <ClInclude Include="cvar.h">
+    <ClInclude Include="sdk\cvar.h">
       <Filter>Header Files\sdk</Filter>
     </ClInclude>
-    <ClInclude Include="datamap.h">
+    <ClInclude Include="sdk\datamap.h">
       <Filter>Header Files\sdk</Filter>
     </ClInclude>
-    <ClInclude Include="dropdown.h">
+    <ClInclude Include="menu\dropdown.h">
       <Filter>Header Files\menu</Filter>
     </ClInclude>
-    <ClInclude Include="element.h">
+    <ClInclude Include="menu\element.h">
       <Filter>Header Files\menu</Filter>
     </ClInclude>
-    <ClInclude Include="engineclient.h">
+    <ClInclude Include="sdk\engineclient.h">
       <Filter>Header Files\sdk</Filter>
     </ClInclude>
-    <ClInclude Include="entity.h">
+    <ClInclude Include="sdk\entity.h">
       <Filter>Header Files\sdk</Filter>
     </ClInclude>
-    <ClInclude Include="entlist.h">
+    <ClInclude Include="sdk\entlist.h">
       <Filter>Header Files\sdk</Filter>
     </ClInclude>
-    <ClInclude Include="game.h">
+    <ClInclude Include="sdk\game.h">
       <Filter>Header Files\sdk</Filter>
     </ClInclude>
-    <ClInclude Include="globalvars.h">
+    <ClInclude Include="sdk\globalvars.h">
       <Filter>Header Files\sdk</Filter>
     </ClInclude>
-    <ClInclude Include="glow.h">
+    <ClInclude Include="sdk\glow.h">
       <Filter>Header Files\sdk</Filter>
     </ClInclude>
-    <ClInclude Include="gui.h">
+    <ClInclude Include="menu\gui.h">
       <Filter>Header Files\menu</Filter>
     </ClInclude>
-    <ClInclude Include="hash.h">
+    <ClInclude Include="util\hash.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="input.h">
+    <ClInclude Include="sdk\input.h">
       <Filter>Header Files\sdk</Filter>
     </ClInclude>
-    <ClInclude Include="matrix.h">
+    <ClInclude Include="sdk\matrix.h">
       <Filter>Header Files\sdk</Filter>
     </ClInclude>
-    <ClInclude Include="memalloc.h">
+    <ClInclude Include="sdk\memalloc.h">
       <Filter>Header Files\sdk</Filter>
     </ClInclude>
-    <ClInclude Include="menu.h">
+    <ClInclude Include="menu\menu.h">
       <Filter>Header Files\menu</Filter>
     </ClInclude>
-    <ClInclude Include="modules.h">
+    <ClInclude Include="util\modules.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="pattern.h">
+    <ClInclude Include="util\pattern.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="pe.h">
+    <ClInclude Include="util\pe.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="prediction.h">
+    <ClInclude Include="sdk\prediction.h">
       <Filter>Header Files\sdk</Filter>
     </ClInclude>
-    <ClInclude Include="sdk.h">
+    <ClInclude Include="sdk\sdk.h">
       <Filter>Header Files\sdk</Filter>
     </ClInclude>
-    <ClInclude Include="util.h">
+    <ClInclude Include="util\util.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="utlvector.h">
+    <ClInclude Include="sdk\utlvector.h">
       <Filter>Header Files\sdk</Filter>
     </ClInclude>
-    <ClInclude Include="vector2.h">
+    <ClInclude Include="sdk\vector2.h">
       <Filter>Header Files\sdk</Filter>
     </ClInclude>
-    <ClInclude Include="vector3.h">
+    <ClInclude Include="sdk\vector3.h">
       <Filter>Header Files\sdk</Filter>
     </ClInclude>
-    <ClInclude Include="trace.h">
+    <ClInclude Include="sdk\trace.h">
       <Filter>Header Files\sdk</Filter>
     </ClInclude>
-    <ClInclude Include="vmt.h">
+    <ClInclude Include="util\vmt.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="winapir.h">
+    <ClInclude Include="util\winapir.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="xorstr.h">
+    <ClInclude Include="util\xorstr.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="tab.h">
+    <ClInclude Include="menu\tab.h">
       <Filter>Header Files\menu</Filter>
     </ClInclude>
-    <ClInclude Include="surface.h">
+    <ClInclude Include="sdk\surface.h">
       <Filter>Header Files\sdk</Filter>
     </ClInclude>
-    <ClInclude Include="stack.h">
+    <ClInclude Include="util\stack.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="slider.h">
+    <ClInclude Include="menu\slider.h">
       <Filter>Header Files\menu</Filter>
     </ClInclude>
-    <ClInclude Include="studio.h">
+    <ClInclude Include="sdk\studio.h">
       <Filter>Header Files\sdk</Filter>
     </ClInclude>
-    <ClInclude Include="netdata.h">
+    <ClInclude Include="core\netdata.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="multidropdown.h">
+    <ClInclude Include="menu\multidropdown.h">
       <Filter>Header Files\menu</Filter>
     </ClInclude>
-    <ClInclude Include="form.h">
+    <ClInclude Include="menu\form.h">
       <Filter>Header Files\menu</Filter>
     </ClInclude>
-    <ClInclude Include="studiorender.h">
+    <ClInclude Include="sdk\studiorender.h">
       <Filter>Header Files\sdk</Filter>
     </ClInclude>
-    <ClInclude Include="chams.h">
+    <ClInclude Include="core\chams.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="nt.h">
+    <ClInclude Include="util\nt.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="notify.h">
+    <ClInclude Include="core\notify.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="client.h">
+    <ClInclude Include="core\client.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="grenades.h">
+    <ClInclude Include="core\grenades.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="unique_vector.h">
+    <ClInclude Include="util\unique_vector.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="resolver.h">
+    <ClInclude Include="core\resolver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="skins.h">
+    <ClInclude Include="core\skins.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="events.h">
+    <ClInclude Include="core\events.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="gameevents.h">
+    <ClInclude Include="sdk\gameevents.h">
       <Filter>Header Files\sdk</Filter>
     </ClInclude>
-    <ClInclude Include="edit.h">
+    <ClInclude Include="menu\edit.h">
       <Filter>Header Files\menu</Filter>
     </ClInclude>
-    <ClInclude Include="keybind.h">
+    <ClInclude Include="menu\keybind.h">
       <Filter>Header Files\menu</Filter>
     </ClInclude>
-    <ClInclude Include="matchframework.h">
+    <ClInclude Include="sdk\matchframework.h">
       <Filter>Header Files\sdk</Filter>
     </ClInclude>
-    <ClInclude Include="hud.h">
+    <ClInclude Include="sdk\hud.h">
       <Filter>Header Files\sdk</Filter>
     </ClInclude>
-    <ClInclude Include="tinyformat.h">
+    <ClInclude Include="util\tinyformat.h">
       <Filter>Header Files\util\contrib</Filter>
     </ClInclude>
-    <ClInclude Include="localize.h">
+    <ClInclude Include="sdk\localize.h">
       <Filter>Header Files\sdk</Filter>
     </ClInclude>
-    <ClInclude Include="config.h">
+    <ClInclude Include="menu\config.h">
       <Filter>Header Files\menu</Filter>
     </ClInclude>
-    <ClInclude Include="json.h">
+    <ClInclude Include="util\json.h">
       <Filter>Header Files\util\contrib</Filter>
     </ClInclude>
-    <ClInclude Include="button.h">
+    <ClInclude Include="menu\button.h">
       <Filter>Header Files\menu</Filter>
     </ClInclude>
-    <ClInclude Include="base64.h">
+    <ClInclude Include="util\base64.h">
       <Filter>Header Files\util\contrib</Filter>
     </ClInclude>
-    <ClInclude Include="syscall.h">
+    <ClInclude Include="util\syscall.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="x86.h">
+    <ClInclude Include="util\x86.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="shots.h">
+    <ClInclude Include="core\shots.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="gamerules.h">
+    <ClInclude Include="sdk\gamerules.h">
       <Filter>Header Files\sdk</Filter>
     </ClInclude>
-    <ClInclude Include="beams.h">
+    <ClInclude Include="sdk\beams.h">
       <Filter>Header Files\sdk</Filter>
     </ClInclude>
-    <ClInclude Include="networkstringtable.h">
+    <ClInclude Include="sdk\networkstringtable.h">
       <Filter>Header Files\sdk</Filter>
     </ClInclude>
-    <ClInclude Include="sound.h">
+    <ClInclude Include="sdk\sound.h">
       <Filter>Header Files\sdk</Filter>
     </ClInclude>
-    <ClInclude Include="entoffsets.h">
+    <ClInclude Include="sdk\entoffsets.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="netvars.h">
+    <ClInclude Include="sdk\netvars.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="interfaces.h">
+    <ClInclude Include="sdk\interfaces.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="bonesetup.cpp">
+    <ClCompile Include="core\bonesetup.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="client.cpp">
+    <ClCompile Include="core\client.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="csgo.cpp">
+    <ClCompile Include="core\csgo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="entry.cpp">
+    <ClCompile Include="core\entry.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="hvh.cpp">
+    <ClCompile Include="core\hvh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="knifebot.cpp">
+    <ClCompile Include="core\knifebot.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="lagcomp.cpp">
+    <ClCompile Include="core\lagcomp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="math.cpp">
+    <ClCompile Include="core\mathlib.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="movement.cpp">
+    <ClCompile Include="core\movement.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="penetration.cpp">
+    <ClCompile Include="core\penetration.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="pred.cpp">
+    <ClCompile Include="core\pred.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="render.cpp">
+    <ClCompile Include="core\render.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="visuals.cpp">
+    <ClCompile Include="core\visuals.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="callbacks.cpp">
+    <ClCompile Include="menu\callbacks.cpp">
       <Filter>Source Files\menu</Filter>
     </ClCompile>
-    <ClCompile Include="checkbox.cpp">
+    <ClCompile Include="menu\checkbox.cpp">
       <Filter>Source Files\menu</Filter>
     </ClCompile>
-    <ClCompile Include="colorpicker.cpp">
+    <ClCompile Include="menu\colorpicker.cpp">
       <Filter>Source Files\menu</Filter>
     </ClCompile>
-    <ClCompile Include="dropdown.cpp">
+    <ClCompile Include="menu\dropdown.cpp">
       <Filter>Source Files\menu</Filter>
     </ClCompile>
-    <ClCompile Include="form.cpp">
+    <ClCompile Include="menu\form.cpp">
       <Filter>Source Files\menu</Filter>
     </ClCompile>
-    <ClCompile Include="slider.cpp">
+    <ClCompile Include="menu\slider.cpp">
       <Filter>Source Files\menu</Filter>
     </ClCompile>
-    <ClCompile Include="gui.cpp">
+    <ClCompile Include="menu\gui.cpp">
       <Filter>Source Files\menu</Filter>
     </ClCompile>
-    <ClCompile Include="netdata.cpp">
+    <ClCompile Include="core\netdata.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="multidropdown.cpp">
+    <ClCompile Include="menu\multidropdown.cpp">
       <Filter>Source Files\menu</Filter>
     </ClCompile>
-    <ClCompile Include="chams.cpp">
+    <ClCompile Include="core\chams.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="hooks.cpp">
+    <ClCompile Include="hooks\hooks.cpp">
       <Filter>Source Files\hooks</Filter>
     </ClCompile>
-    <ClCompile Include="wndproc.cpp">
+    <ClCompile Include="hooks\wndproc.cpp">
       <Filter>Source Files\hooks</Filter>
     </ClCompile>
-    <ClCompile Include="grenades.cpp">
+    <ClCompile Include="core\grenades.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="resolver.cpp">
+    <ClCompile Include="core\resolver.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="viewrender.cpp">
+    <ClCompile Include="hooks\viewrender.cpp">
       <Filter>Source Files\hooks\game</Filter>
     </ClCompile>
-    <ClCompile Include="prediction.cpp">
+    <ClCompile Include="hooks\prediction.cpp">
       <Filter>Source Files\hooks\game</Filter>
     </ClCompile>
-    <ClCompile Include="netchannel.cpp">
+    <ClCompile Include="hooks\netchannel.cpp">
       <Filter>Source Files\hooks\game</Filter>
     </ClCompile>
-    <ClCompile Include="panel.cpp">
+    <ClCompile Include="hooks\panel.cpp">
       <Filter>Source Files\hooks\game</Filter>
     </ClCompile>
-    <ClCompile Include="clientmode.cpp">
+    <ClCompile Include="hooks\clientmode.cpp">
       <Filter>Source Files\hooks\game</Filter>
     </ClCompile>
-    <ClCompile Include="surface.cpp">
+    <ClCompile Include="hooks\surface.cpp">
       <Filter>Source Files\hooks\game</Filter>
     </ClCompile>
-    <ClCompile Include="clientdll.cpp">
+    <ClCompile Include="hooks\clientdll.cpp">
       <Filter>Source Files\hooks\game</Filter>
     </ClCompile>
-    <ClCompile Include="engine.cpp">
+    <ClCompile Include="hooks\engine.cpp">
       <Filter>Source Files\hooks\game</Filter>
     </ClCompile>
-    <ClCompile Include="shadowmgr.cpp">
+    <ClCompile Include="hooks\shadowmgr.cpp">
       <Filter>Source Files\hooks\game</Filter>
     </ClCompile>
-    <ClCompile Include="renderview.cpp">
+    <ClCompile Include="hooks\renderview.cpp">
       <Filter>Source Files\hooks\game</Filter>
     </ClCompile>
-    <ClCompile Include="cvar.cpp">
+    <ClCompile Include="hooks\cvar.cpp">
       <Filter>Source Files\hooks</Filter>
     </ClCompile>
-    <ClCompile Include="player.cpp">
+    <ClCompile Include="hooks\player.cpp">
       <Filter>Source Files\hooks</Filter>
     </ClCompile>
-    <ClCompile Include="modelrender.cpp">
+    <ClCompile Include="hooks\modelrender.cpp">
       <Filter>Source Files\hooks\game</Filter>
     </ClCompile>
-    <ClCompile Include="skins.cpp">
+    <ClCompile Include="core\skins.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="events.cpp">
+    <ClCompile Include="core\events.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="edit.cpp">
+    <ClCompile Include="menu\edit.cpp">
       <Filter>Source Files\menu</Filter>
     </ClCompile>
-    <ClCompile Include="keybind.cpp">
+    <ClCompile Include="menu\keybind.cpp">
       <Filter>Source Files\menu</Filter>
     </ClCompile>
-    <ClCompile Include="matchframework.cpp">
+    <ClCompile Include="hooks\matchframework.cpp">
       <Filter>Source Files\hooks\game</Filter>
     </ClCompile>
-    <ClCompile Include="materialsystem.cpp">
+    <ClCompile Include="hooks\materialsystem.cpp">
       <Filter>Source Files\hooks\game</Filter>
     </ClCompile>
-    <ClCompile Include="config.cpp">
+    <ClCompile Include="menu\config.cpp">
       <Filter>Source Files\menu</Filter>
     </ClCompile>
-    <ClCompile Include="button.cpp">
+    <ClCompile Include="menu\button.cpp">
       <Filter>Source Files\menu</Filter>
     </ClCompile>
-    <ClCompile Include="firebullets.cpp">
+    <ClCompile Include="hooks\firebullets.cpp">
       <Filter>Source Files\hooks</Filter>
     </ClCompile>
-    <ClCompile Include="aimbot.cpp">
+    <ClCompile Include="core\aimbot.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="shots.cpp">
+    <ClCompile Include="core\shots.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="clientstate.cpp">
+    <ClCompile Include="hooks\clientstate.cpp">
       <Filter>Source Files\hooks\game</Filter>
     </ClCompile>
   </ItemGroup>

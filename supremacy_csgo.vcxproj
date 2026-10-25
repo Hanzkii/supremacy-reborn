@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -47,15 +47,16 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental />
     <OutDir>$(SolutionDir)output\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)output\$(Configuration)\obj</IntDir>
+    <IntDir>$(SolutionDir)output\$(Configuration)\obj\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental />
     <OutDir>$(SolutionDir)output\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)output\$(Configuration)\obj</IntDir>
+    <IntDir>$(SolutionDir)output\$(Configuration)\obj\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)sdk;$(ProjectDir)menu;$(ProjectDir)hooks;$(ProjectDir)util;$(ProjectDir)core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -72,7 +73,7 @@
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <DebugInformationFormat>None</DebugInformationFormat>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <FloatingPointModel>Fast</FloatingPointModel>
       <StructMemberAlignment>Default</StructMemberAlignment>
       <Cpp0xSupport>true</Cpp0xSupport>
@@ -87,6 +88,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)sdk;$(ProjectDir)menu;$(ProjectDir)hooks;$(ProjectDir)util;$(ProjectDir)core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -103,7 +105,7 @@
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <FloatingPointModel>Fast</FloatingPointModel>
       <StructMemberAlignment>Default</StructMemberAlignment>
       <Cpp0xSupport>true</Cpp0xSupport>
@@ -118,152 +120,152 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="address.h" />
-    <ClInclude Include="aimbot.h" />
-    <ClInclude Include="angle.h" />
-    <ClInclude Include="base64.h" />
-    <ClInclude Include="basehandle.h" />
-    <ClInclude Include="beams.h" />
-    <ClInclude Include="bonesetup.h" />
-    <ClInclude Include="button.h" />
-    <ClInclude Include="callbacks.h" />
-    <ClInclude Include="chams.h" />
-    <ClInclude Include="checkbox.h" />
-    <ClInclude Include="client.h" />
-    <ClInclude Include="clientclass.h" />
-    <ClInclude Include="clientdll.h" />
-    <ClInclude Include="clientmode.h" />
-    <ClInclude Include="color.h" />
-    <ClInclude Include="colorpicker.h" />
-    <ClInclude Include="config.h" />
-    <ClInclude Include="csgo.h" />
-    <ClInclude Include="cvar.h" />
-    <ClInclude Include="datamap.h" />
-    <ClInclude Include="dropdown.h" />
-    <ClInclude Include="edit.h" />
-    <ClInclude Include="element.h" />
-    <ClInclude Include="engineclient.h" />
-    <ClInclude Include="entity.h" />
-    <ClInclude Include="entlist.h" />
-    <ClInclude Include="entoffsets.h" />
-    <ClInclude Include="form.h" />
-    <ClInclude Include="game.h" />
-    <ClInclude Include="gameevents.h" />
-    <ClInclude Include="gamerules.h" />
-    <ClInclude Include="globalvars.h" />
-    <ClInclude Include="glow.h" />
-    <ClInclude Include="grenades.h" />
-    <ClInclude Include="gui.h" />
-    <ClInclude Include="hash.h" />
-    <ClInclude Include="hooks.h" />
-    <ClInclude Include="hud.h" />
-    <ClInclude Include="hvh.h" />
-    <ClInclude Include="includes.h" />
-    <ClInclude Include="input.h" />
-    <ClInclude Include="interfaces.h" />
-    <ClInclude Include="json.h" />
-    <ClInclude Include="keybind.h" />
-    <ClInclude Include="lagcomp.h" />
-    <ClInclude Include="lagrecord.h" />
-    <ClInclude Include="events.h" />
-    <ClInclude Include="localize.h" />
-    <ClInclude Include="matchframework.h" />
-    <ClInclude Include="math.h" />
-    <ClInclude Include="matrix.h" />
-    <ClInclude Include="memalloc.h" />
-    <ClInclude Include="menu.h" />
-    <ClInclude Include="modules.h" />
-    <ClInclude Include="movement.h" />
-    <ClInclude Include="multidropdown.h" />
-    <ClInclude Include="netdata.h" />
-    <ClInclude Include="networkstringtable.h" />
-    <ClInclude Include="notify.h" />
-    <ClInclude Include="nt.h" />
-    <ClInclude Include="netvars.h" />
-    <ClInclude Include="pattern.h" />
-    <ClInclude Include="pe.h" />
-    <ClInclude Include="penetration.h" />
-    <ClInclude Include="pred.h" />
-    <ClInclude Include="prediction.h" />
-    <ClInclude Include="render.h" />
-    <ClInclude Include="resolver.h" />
-    <ClInclude Include="sdk.h" />
-    <ClInclude Include="shots.h" />
-    <ClInclude Include="skins.h" />
-    <ClInclude Include="slider.h" />
-    <ClInclude Include="sound.h" />
-    <ClInclude Include="stack.h" />
-    <ClInclude Include="studio.h" />
-    <ClInclude Include="studiorender.h" />
-    <ClInclude Include="surface.h" />
-    <ClInclude Include="syscall.h" />
-    <ClInclude Include="tab.h" />
-    <ClInclude Include="tinyformat.h" />
-    <ClInclude Include="trace.h" />
-    <ClInclude Include="unique_vector.h" />
-    <ClInclude Include="util.h" />
-    <ClInclude Include="utlvector.h" />
-    <ClInclude Include="vector2.h" />
-    <ClInclude Include="vector3.h" />
-    <ClInclude Include="visuals.h" />
-    <ClInclude Include="vmt.h" />
-    <ClInclude Include="winapir.h" />
-    <ClInclude Include="x86.h" />
-    <ClInclude Include="xorstr.h" />
+    <ClInclude Include="util\address.h" />
+    <ClInclude Include="core\aimbot.h" />
+    <ClInclude Include="sdk\angle.h" />
+    <ClInclude Include="util\base64.h" />
+    <ClInclude Include="sdk\basehandle.h" />
+    <ClInclude Include="sdk\beams.h" />
+    <ClInclude Include="core\bonesetup.h" />
+    <ClInclude Include="menu\button.h" />
+    <ClInclude Include="menu\callbacks.h" />
+    <ClInclude Include="core\chams.h" />
+    <ClInclude Include="menu\checkbox.h" />
+    <ClInclude Include="core\client.h" />
+    <ClInclude Include="sdk\clientclass.h" />
+    <ClInclude Include="sdk\clientdll.h" />
+    <ClInclude Include="sdk\clientmode.h" />
+    <ClInclude Include="sdk\color.h" />
+    <ClInclude Include="menu\colorpicker.h" />
+    <ClInclude Include="menu\config.h" />
+    <ClInclude Include="core\csgo.h" />
+    <ClInclude Include="sdk\cvar.h" />
+    <ClInclude Include="sdk\datamap.h" />
+    <ClInclude Include="menu\dropdown.h" />
+    <ClInclude Include="menu\edit.h" />
+    <ClInclude Include="menu\element.h" />
+    <ClInclude Include="sdk\engineclient.h" />
+    <ClInclude Include="sdk\entity.h" />
+    <ClInclude Include="sdk\entlist.h" />
+    <ClInclude Include="sdk\entoffsets.h" />
+    <ClInclude Include="menu\form.h" />
+    <ClInclude Include="sdk\game.h" />
+    <ClInclude Include="sdk\gameevents.h" />
+    <ClInclude Include="sdk\gamerules.h" />
+    <ClInclude Include="sdk\globalvars.h" />
+    <ClInclude Include="sdk\glow.h" />
+    <ClInclude Include="core\grenades.h" />
+    <ClInclude Include="menu\gui.h" />
+    <ClInclude Include="util\hash.h" />
+    <ClInclude Include="hooks\hooks.h" />
+    <ClInclude Include="sdk\hud.h" />
+    <ClInclude Include="core\hvh.h" />
+    <ClInclude Include="core\includes.h" />
+    <ClInclude Include="sdk\input.h" />
+    <ClInclude Include="sdk\interfaces.h" />
+    <ClInclude Include="util\json.h" />
+    <ClInclude Include="menu\keybind.h" />
+    <ClInclude Include="core\lagcomp.h" />
+    <ClInclude Include="core\lagrecord.h" />
+    <ClInclude Include="core\events.h" />
+    <ClInclude Include="sdk\localize.h" />
+    <ClInclude Include="sdk\matchframework.h" />
+    <ClInclude Include="core\mathlib.h" />
+    <ClInclude Include="sdk\matrix.h" />
+    <ClInclude Include="sdk\memalloc.h" />
+    <ClInclude Include="menu\menu.h" />
+    <ClInclude Include="util\modules.h" />
+    <ClInclude Include="core\movement.h" />
+    <ClInclude Include="menu\multidropdown.h" />
+    <ClInclude Include="core\netdata.h" />
+    <ClInclude Include="sdk\networkstringtable.h" />
+    <ClInclude Include="core\notify.h" />
+    <ClInclude Include="util\nt.h" />
+    <ClInclude Include="sdk\netvars.h" />
+    <ClInclude Include="util\pattern.h" />
+    <ClInclude Include="util\pe.h" />
+    <ClInclude Include="core\penetration.h" />
+    <ClInclude Include="core\pred.h" />
+    <ClInclude Include="sdk\prediction.h" />
+    <ClInclude Include="core\render.h" />
+    <ClInclude Include="core\resolver.h" />
+    <ClInclude Include="sdk\sdk.h" />
+    <ClInclude Include="core\shots.h" />
+    <ClInclude Include="core\skins.h" />
+    <ClInclude Include="menu\slider.h" />
+    <ClInclude Include="sdk\sound.h" />
+    <ClInclude Include="util\stack.h" />
+    <ClInclude Include="sdk\studio.h" />
+    <ClInclude Include="sdk\studiorender.h" />
+    <ClInclude Include="sdk\surface.h" />
+    <ClInclude Include="util\syscall.h" />
+    <ClInclude Include="menu\tab.h" />
+    <ClInclude Include="util\tinyformat.h" />
+    <ClInclude Include="sdk\trace.h" />
+    <ClInclude Include="util\unique_vector.h" />
+    <ClInclude Include="util\util.h" />
+    <ClInclude Include="sdk\utlvector.h" />
+    <ClInclude Include="sdk\vector2.h" />
+    <ClInclude Include="sdk\vector3.h" />
+    <ClInclude Include="core\visuals.h" />
+    <ClInclude Include="util\vmt.h" />
+    <ClInclude Include="util\winapir.h" />
+    <ClInclude Include="util\x86.h" />
+    <ClInclude Include="util\xorstr.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="aimbot.cpp" />
-    <ClCompile Include="bonesetup.cpp" />
-    <ClCompile Include="button.cpp" />
-    <ClCompile Include="callbacks.cpp" />
-    <ClCompile Include="chams.cpp" />
-    <ClCompile Include="checkbox.cpp" />
-    <ClCompile Include="client.cpp" />
-    <ClCompile Include="clientstate.cpp" />
-    <ClCompile Include="colorpicker.cpp" />
-    <ClCompile Include="config.cpp" />
-    <ClCompile Include="edit.cpp" />
-    <ClCompile Include="events.cpp" />
-    <ClCompile Include="firebullets.cpp" />
-    <ClCompile Include="keybind.cpp" />
-    <ClCompile Include="matchframework.cpp" />
-    <ClCompile Include="materialsystem.cpp" />
-    <ClCompile Include="shadowmgr.cpp" />
-    <ClCompile Include="csgo.cpp" />
-    <ClCompile Include="cvar.cpp" />
-    <ClCompile Include="modelrender.cpp" />
-    <ClCompile Include="dropdown.cpp" />
-    <ClCompile Include="entry.cpp" />
-    <ClCompile Include="form.cpp" />
-    <ClCompile Include="grenades.cpp" />
-    <ClCompile Include="gui.cpp" />
-    <ClCompile Include="hooks.cpp" />
-    <ClCompile Include="hvh.cpp" />
-    <ClCompile Include="engine.cpp" />
-    <ClCompile Include="knifebot.cpp" />
-    <ClCompile Include="lagcomp.cpp" />
-    <ClCompile Include="clientdll.cpp" />
-    <ClCompile Include="shots.cpp" />
-    <ClCompile Include="skins.cpp" />
-    <ClCompile Include="surface.cpp" />
-    <ClCompile Include="math.cpp" />
-    <ClCompile Include="movement.cpp" />
-    <ClCompile Include="multidropdown.cpp" />
-    <ClCompile Include="netdata.cpp" />
-    <ClCompile Include="clientmode.cpp" />
-    <ClCompile Include="panel.cpp" />
-    <ClCompile Include="penetration.cpp" />
-    <ClCompile Include="player.cpp" />
-    <ClCompile Include="pred.cpp" />
-    <ClCompile Include="netchannel.cpp" />
-    <ClCompile Include="render.cpp" />
-    <ClCompile Include="viewrender.cpp" />
-    <ClCompile Include="resolver.cpp" />
-    <ClCompile Include="prediction.cpp" />
-    <ClCompile Include="renderview.cpp" />
-    <ClCompile Include="slider.cpp" />
-    <ClCompile Include="visuals.cpp" />
-    <ClCompile Include="wndproc.cpp" />
+    <ClCompile Include="core\aimbot.cpp" />
+    <ClCompile Include="core\bonesetup.cpp" />
+    <ClCompile Include="menu\button.cpp" />
+    <ClCompile Include="menu\callbacks.cpp" />
+    <ClCompile Include="core\chams.cpp" />
+    <ClCompile Include="menu\checkbox.cpp" />
+    <ClCompile Include="core\client.cpp" />
+    <ClCompile Include="hooks\clientstate.cpp" />
+    <ClCompile Include="menu\colorpicker.cpp" />
+    <ClCompile Include="menu\config.cpp" />
+    <ClCompile Include="menu\edit.cpp" />
+    <ClCompile Include="core\events.cpp" />
+    <ClCompile Include="hooks\firebullets.cpp" />
+    <ClCompile Include="menu\keybind.cpp" />
+    <ClCompile Include="hooks\matchframework.cpp" />
+    <ClCompile Include="hooks\materialsystem.cpp" />
+    <ClCompile Include="hooks\shadowmgr.cpp" />
+    <ClCompile Include="core\csgo.cpp" />
+    <ClCompile Include="hooks\cvar.cpp" />
+    <ClCompile Include="hooks\modelrender.cpp" />
+    <ClCompile Include="menu\dropdown.cpp" />
+    <ClCompile Include="core\entry.cpp" />
+    <ClCompile Include="menu\form.cpp" />
+    <ClCompile Include="core\grenades.cpp" />
+    <ClCompile Include="menu\gui.cpp" />
+    <ClCompile Include="hooks\hooks.cpp" />
+    <ClCompile Include="core\hvh.cpp" />
+    <ClCompile Include="hooks\engine.cpp" />
+    <ClCompile Include="core\knifebot.cpp" />
+    <ClCompile Include="core\lagcomp.cpp" />
+    <ClCompile Include="hooks\clientdll.cpp" />
+    <ClCompile Include="core\shots.cpp" />
+    <ClCompile Include="core\skins.cpp" />
+    <ClCompile Include="hooks\surface.cpp" />
+    <ClCompile Include="core\mathlib.cpp" />
+    <ClCompile Include="core\movement.cpp" />
+    <ClCompile Include="menu\multidropdown.cpp" />
+    <ClCompile Include="core\netdata.cpp" />
+    <ClCompile Include="hooks\clientmode.cpp" />
+    <ClCompile Include="hooks\panel.cpp" />
+    <ClCompile Include="core\penetration.cpp" />
+    <ClCompile Include="hooks\player.cpp" />
+    <ClCompile Include="core\pred.cpp" />
+    <ClCompile Include="hooks\netchannel.cpp" />
+    <ClCompile Include="core\render.cpp" />
+    <ClCompile Include="hooks\viewrender.cpp" />
+    <ClCompile Include="core\resolver.cpp" />
+    <ClCompile Include="hooks\prediction.cpp" />
+    <ClCompile Include="hooks\renderview.cpp" />
+    <ClCompile Include="menu\slider.cpp" />
+    <ClCompile Include="core\visuals.cpp" />
+    <ClCompile Include="hooks\wndproc.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
