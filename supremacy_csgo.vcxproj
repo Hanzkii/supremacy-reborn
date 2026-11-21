@@ -189,6 +189,7 @@
     <ClInclude Include="sdk\prediction.h" />
     <ClInclude Include="core\render.h" />
     <ClInclude Include="core\resolver.h" />
+    <ClInclude Include="core\resolver_learning.h" />
     <ClInclude Include="sdk\sdk.h" />
     <ClInclude Include="core\shots.h" />
     <ClInclude Include="core\skins.h" />
@@ -261,6 +262,7 @@
     <ClCompile Include="core\render.cpp" />
     <ClCompile Include="hooks\viewrender.cpp" />
     <ClCompile Include="core\resolver.cpp" />
+    <ClCompile Include="core\resolver_learning.cpp" />
     <ClCompile Include="hooks\prediction.cpp" />
     <ClCompile Include="hooks\renderview.cpp" />
     <ClCompile Include="menu\slider.cpp" />
