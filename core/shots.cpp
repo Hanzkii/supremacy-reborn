@@ -169,8 +169,10 @@ void Shots::OnImpact( IGameEvent *evt ) {
 	g_csgo.m_engine_trace->ClipRayToEntity( Ray( start, end ), MASK_SHOT, target, &trace );
 
 	// we did not hit jackshit, or someone else.
-	if ( !trace.m_entity || !trace.m_entity->IsPlayer( ) || trace.m_entity != target )
+	if ( !trace.m_entity || !trace.m_entity->IsPlayer( ) || trace.m_entity != target ) {
 		g_notify.add( XOR( "shot missed due to spread\n" ) );
+		g_resolver_learning.RecordOutcome(target->index(), ResolverLearning::Outcome::INCONCLUSIVE);
+	}
 
 	// we should have 100% hit this player..
 	// this is a miss due to wrong angles.
@@ -189,6 +191,7 @@ void Shots::OnImpact( IGameEvent *evt ) {
 			++data->m_stand_index2;
 
 		++data->m_missed_shots;
+		g_resolver_learning.RecordOutcome(target->index(), ResolverLearning::Outcome::MISS);
 	}
 
 	// restore player to his original state.
@@ -293,6 +296,9 @@ void Shots::OnHurt( IGameEvent *evt ) {
 	// no impact matched.
 	if ( !impact )
 		return;
+
+	// Confirmed hit; update diagnostics without affecting angle selection.
+	g_resolver_learning.RecordOutcome(target->index(), ResolverLearning::Outcome::HIT);
 
 	// setup new data for hit track and push to hit track.
 	HitRecord hit;
