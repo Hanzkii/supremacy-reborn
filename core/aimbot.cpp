@@ -293,6 +293,19 @@ void AimPlayer::OnNetUpdate(Player* player) {
 		UpdateAnimations(current);
 
 		// create bone matrix for this record.
+		// Capture the networked animation signature for diagnostics only.
+		std::uint32_t animation_signature = 2166136261u;
+		for (int layer = 0; layer < 13; ++layer) {
+			const C_AnimationLayer& anim = current->m_layers[layer];
+			const int values[] = { anim.m_sequence, static_cast<int>(anim.m_weight * 1000.f),
+				static_cast<int>(anim.m_cycle * 1000.f), static_cast<int>(anim.m_playback_rate * 1000.f) };
+			for (int value : values) {
+				animation_signature ^= static_cast<std::uint32_t>(value);
+				animation_signature *= 16777619u;
+			}
+		}
+		g_resolver_learning.Observe(player->index(), { current->m_sim_time, current->m_body,
+			current->m_anim_velocity.length_2d(), current->m_flags, animation_signature });
 		g_bones.setup(m_player, nullptr, current);
 	}
 
