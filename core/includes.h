@@ -83,6 +83,7 @@ using ulong_t = unsigned long;
 #include "chams.h"
 #include "notify.h"
 #include "resolver.h"
+#include "resolver_learning.h"
 #include "grenades.h"
 #include "skins.h"
 #include "events.h"
