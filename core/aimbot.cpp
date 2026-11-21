@@ -327,6 +327,7 @@ void AimPlayer::OnRoundStart(Player* player) {
 
 	m_records.clear();
 	m_hitboxes.clear();
+	g_resolver_learning.Reset(player->index());
 
 	// IMPORTANT: DO NOT CLEAR LAST HIT SHIT.
 }
